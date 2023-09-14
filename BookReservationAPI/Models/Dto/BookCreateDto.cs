@@ -1,16 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookReservationAPI.Models
 {
-    [Index(nameof(ISBN), IsUnique =true)]
-    public class Book
+    public class BookCreateDto
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]
@@ -25,10 +20,6 @@ namespace BookReservationAPI.Models
         public string ImageUrl { get; set; }
         [Required]
         public int IdCategory { get; set; }
-        [Required]
-        [ForeignKey("IdCategory")]
-        [ValidateNever]
-        public Category category { get; set; }
         [Required]
         [Range(0, int.MaxValue)]
         public int Stock { get; set; }
