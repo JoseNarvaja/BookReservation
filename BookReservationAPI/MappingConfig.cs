@@ -15,6 +15,7 @@ namespace BookReservationAPI
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Category, CategoryCreateDto>().ReverseMap();
             CreateMap<Category, CategoryUpdateDto>().ReverseMap();
+            CreateMap<LocalUser, UserDto>().ReverseMap();
         }
     }
 }

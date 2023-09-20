@@ -1,7 +1,9 @@
 using BookReservationAPI;
 using BookReservationAPI.Data;
+using BookReservationAPI.Models;
 using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(options => {
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddIdentity<LocalUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,6 +34,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
