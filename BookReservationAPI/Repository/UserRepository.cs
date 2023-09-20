@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BookReservationAPI.Utility;
 
 namespace BookReservationAPI.Repository
 {
@@ -57,7 +58,7 @@ namespace BookReservationAPI.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName.ToString()),
                     new Claim(ClaimTypes.Role, userRole.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddDays(1),
@@ -69,7 +70,6 @@ namespace BookReservationAPI.Repository
             LoginResponseDto loginResponseDto = new LoginResponseDto()
             {
                 Token = tokenHandler.WriteToken(token),
-                Role = userRole.FirstOrDefault(),
                 User = _mapper.Map<UserDto>(user)
             };
 
@@ -93,7 +93,13 @@ namespace BookReservationAPI.Repository
                 var result = await _userManager.CreateAsync(user, registerRequest.Password);
                 if(result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "client");
+                    //if(await _roleManager.RoleExistsAsync(StaticData.RoleAdmin))
+                    //{
+                    //    await _roleManager.CreateAsync(new IdentityRole(StaticData.RoleAdmin));
+                    //    await _roleManager.CreateAsync(new IdentityRole(StaticData.RoleCustomer));
+                    //}
+
+                    await _userManager.AddToRoleAsync(user, StaticData.RoleAdmin);
                     var userToReturn = _context.LocalUsers
                         .FirstOrDefault(u => u.UserName == registerRequest.UserName);
                     return _mapper.Map<UserDto>(userToReturn);
