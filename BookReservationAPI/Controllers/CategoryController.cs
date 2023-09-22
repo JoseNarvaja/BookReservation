@@ -3,6 +3,8 @@ using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
 using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
+using BookReservationAPI.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query;
@@ -25,6 +27,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpGet(Name = "GetCategories")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetCategories()
@@ -46,6 +49,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpGet("{id:int}", Name ="GetCategory")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -85,6 +89,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpPost(Name = "CreateCategory")]
+        [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -118,6 +123,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpDelete("{id:int}",Name ="DeleteCategory")]
+        [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -160,6 +166,10 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpPut("{id:int}",Name ="UpdateCategory")]
+        [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> UpdateCategory([FromRoute] int id, [FromBody] CategoryUpdateDto categoryUpdate)
         {
             try
@@ -188,8 +198,5 @@ namespace BookReservationAPI.Controllers
             }
             return _response;
         }
-
-
-
     }
 }

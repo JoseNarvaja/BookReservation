@@ -2,6 +2,8 @@
 using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
 using BookReservationAPI.Repository.Interfaces;
+using BookReservationAPI.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -21,6 +23,7 @@ namespace BookReservationAPI.Controllers
             _mapper = mapper;
         }
         [HttpGet(Name = "GetBooks")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetBooks()
@@ -42,6 +45,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetBook")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -81,6 +85,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpPost("CreateBook")]
+        [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -121,6 +126,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpDelete("{id:int}", Name = "DeleteBook")]
+        [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -163,8 +169,9 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpPut("{id:int}", Name ="UpdateBook")]
+        [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> UpdateBook([FromRoute] int id, [FromBody] BookUpdateDto bookUpdate)
         {
