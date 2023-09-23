@@ -11,8 +11,8 @@ namespace BookReservationAPI.Models
         public DateTime ReservationDate { get; set; }
         [Required]
         public DateTime ReservationEnd { get; set; }
-        public DateTime PickupDate { get; set; }
-        public DateTime ReturnDate { get; set; }
+        public DateTime? PickupDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
 
         [Required]
         public int BookId { get; set; }
