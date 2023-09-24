@@ -4,6 +4,8 @@ using BookReservationAPI.Data.DbInitializer;
 using BookReservationAPI.Models;
 using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
+using BookReservationAPI.Utility.ReservationValidation;
+using BookReservationAPI.Utility.ReservationValidation.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -76,6 +78,7 @@ builder.Services.AddDbContext<AppDbContext>(options => {
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IReservationValidator, ReservationValidator>();
 
 builder.Services.AddIdentity<LocalUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();

@@ -3,8 +3,10 @@ using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Utility;
+using BookReservationAPI.Utility.ReservationValidation.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 
@@ -17,13 +19,15 @@ namespace BookReservationAPI.Controllers
         private APIResponse _response;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        public ReservationController(IMapper mapper, IUnitOfWork unitOfWork)
+        private readonly IReservationValidator _reservationValidator;
+        public ReservationController(IMapper mapper, IUnitOfWork unitOfWork, IReservationValidator reservationValidator)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _reservationValidator = reservationValidator;
             _response = new APIResponse();
         }
-        [HttpGet]
+        [HttpGet("GetReservations")]
         [Authorize(AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -45,6 +49,61 @@ namespace BookReservationAPI.Controllers
             {
                 _response.Success = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Messages.Add(ex.Message);
+                return _response;
+            }
+        }
+
+        [HttpPost("ReserveBook")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<APIResponse>> ReserveBook([FromBody] ReservationCreateDto reservationCreateDto)
+        {
+            _response.Success = false;
+            try
+            {
+                if(!ModelState.IsValid)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Result = ModelState;
+                    return BadRequest(_response);
+                }
+
+                var validationResult = await _reservationValidator.Validate(_unitOfWork, reservationCreateDto);
+
+                if (! validationResult.success)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+
+                    foreach(string error in validationResult.Errors)
+                    {
+                        _response.Messages.Add(error);
+                    }
+
+                    return BadRequest(_response);
+                }
+
+                Reservation model = _mapper.Map<Reservation>(reservationCreateDto);
+
+                var book = await _unitOfWork.Books.GetAsync(b => b.ISBN == reservationCreateDto.ISBN);
+                var user = await _unitOfWork.LocalUsers.GetAsync(u => u.UserName == reservationCreateDto.UserName);
+                model.UserId = user.Id;
+                model.BookId= book.Id;
+
+                await _unitOfWork.Reservations.AddAsync(model);
+                await _unitOfWork.Books.DecreaseCount(reservationCreateDto.ISBN, 1);
+                await _unitOfWork.Save();
+
+                _response.Result = _mapper.Map<ReservationDto>(model);
+                _response.Success = true;
+                _response.StatusCode = HttpStatusCode.Created;
+
+                return Ok(_response);
+            }
+            catch(Exception ex)
+            {
+                _response.Success = false;
+                _response.StatusCode= HttpStatusCode.InternalServerError;
+                _response.Messages.Add(ex.Message);
                 return _response;
             }
         }

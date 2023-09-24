@@ -19,7 +19,7 @@ namespace BookReservationAPI.Repository
                 throw new Exception("The book was already picked up.");
             }
             reservation.PickupDate = DateTime.Now;
-            await _context.AddAsync(reservation);
+            _context.Update(reservation);
             await _context.SaveChangesAsync();
         }
 
@@ -30,7 +30,7 @@ namespace BookReservationAPI.Repository
                 throw new Exception("The book was already returned.");
             }
             reservation.ReturnDate = DateTime.Now;
-            await _context.AddAsync(reservation);
+            _context.Update(reservation);
             await _context.SaveChangesAsync();
         }
     }
