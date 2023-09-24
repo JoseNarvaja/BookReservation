@@ -88,6 +88,7 @@ namespace BookReservationAPI.Controllers
         [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateBook([FromBody] BookCreateDto bookCreate)
         {
@@ -129,6 +130,7 @@ namespace BookReservationAPI.Controllers
         [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> DeleteBook([FromRoute] int id)
@@ -149,7 +151,7 @@ namespace BookReservationAPI.Controllers
                 {
                     _response.Messages.Add("No book was found");
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    NotFound(_response);
+                    return NotFound(_response);
                 }
 
                 _unitOfWork.Books.Remove(model);
@@ -172,6 +174,7 @@ namespace BookReservationAPI.Controllers
         [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> UpdateBook([FromRoute] int id, [FromBody] BookUpdateDto bookUpdate)
         {
