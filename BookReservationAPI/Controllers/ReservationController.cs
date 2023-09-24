@@ -82,7 +82,11 @@ namespace BookReservationAPI.Controllers
                     return BadRequest(_response);
                 }
 
-                Reservation model = _mapper.Map<Reservation>(reservationCreateDto);
+                Reservation model = new()
+                {
+                    ReservationEnd = reservationCreateDto.ReservationEnd,
+                    ReservationDate = reservationCreateDto.ReservationDate
+                };
 
                 var book = await _unitOfWork.Books.GetAsync(b => b.ISBN == reservationCreateDto.ISBN);
                 var user = await _unitOfWork.LocalUsers.GetAsync(u => u.UserName == reservationCreateDto.UserName);

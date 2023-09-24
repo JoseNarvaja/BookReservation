@@ -93,12 +93,6 @@ namespace BookReservationAPI.Repository
                 var result = await _userManager.CreateAsync(user, registerRequest.Password);
                 if(result.Succeeded)
                 {
-                    //if(await _roleManager.RoleExistsAsync(StaticData.RoleAdmin))
-                    //{
-                    //    await _roleManager.CreateAsync(new IdentityRole(StaticData.RoleAdmin));
-                    //    await _roleManager.CreateAsync(new IdentityRole(StaticData.RoleCustomer));
-                    //}
-
                     await _userManager.AddToRoleAsync(user, StaticData.RoleCustomer);
                     var userToReturn = _context.LocalUsers
                         .FirstOrDefault(u => u.UserName == registerRequest.UserName);

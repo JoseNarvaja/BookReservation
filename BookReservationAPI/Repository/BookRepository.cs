@@ -20,6 +20,7 @@ namespace BookReservationAPI.Repository
             Book book = await _dbContext.Books.FirstOrDefaultAsync(b => b.ISBN == ISBN);
             book.Stock -= count;
             _dbContext.Books.Update(book);
+            _dbContext.SaveChanges();
             return;
         }
 
