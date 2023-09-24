@@ -20,7 +20,6 @@ namespace BookReservationAPI.Repository
             }
             reservation.PickupDate = DateTime.Now;
             _context.Update(reservation);
-            await _context.SaveChangesAsync();
         }
 
         public async Task NotifyReturn(Reservation reservation)
@@ -31,7 +30,6 @@ namespace BookReservationAPI.Repository
             }
             reservation.ReturnDate = DateTime.Now;
             _context.Update(reservation);
-            await _context.SaveChangesAsync();
         }
     }
 }

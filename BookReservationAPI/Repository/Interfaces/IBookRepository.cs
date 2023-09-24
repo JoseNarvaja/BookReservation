@@ -6,5 +6,6 @@ namespace BookReservationAPI.Repository.Interfaces
     {
         void Update(Book book);
         Task DecreaseCount(string ISBN, int count);
+        Task IncreaseCount(string ISBN, int count);
     }
 }

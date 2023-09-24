@@ -55,6 +55,8 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpPost("ReserveBook")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<APIResponse>> ReserveBook([FromBody] ReservationCreateDto reservationCreateDto)
         {
@@ -108,6 +110,94 @@ namespace BookReservationAPI.Controllers
                 _response.StatusCode= HttpStatusCode.InternalServerError;
                 _response.Messages.Add(ex.Message);
                 return _response;
+            }
+        }
+
+        [HttpPut("Pickup/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = StaticData.RoleAdmin)]
+        public async Task<ActionResult<APIResponse>> PickupReservation([FromRoute] int id)
+        {
+            _response.Success = false;
+            try
+            {
+                Reservation reservationFromDb = await _unitOfWork.Reservations.GetAsync(r => r.Id == id);
+
+                if(reservationFromDb == null)
+                {
+                    _response.StatusCode= HttpStatusCode.NotFound;
+                    _response.Messages.Add("The reservation wasn't found");
+                    return NotFound(_response);
+                }
+
+                if(reservationFromDb.PickupDate != null)
+                {
+                    _response.StatusCode= HttpStatusCode.BadRequest;
+                    _response.Messages.Add("The reservation was already pickup");
+                    return BadRequest(_response);
+                }
+
+                await _unitOfWork.Reservations.NotifyPickup(reservationFromDb);
+                await _unitOfWork.Save();
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Success= true;
+                return Ok(_response);
+            }
+            catch(Exception ex)
+            {
+                _response.Success = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Messages.Add($"{ex.Message}");
+                return BadRequest(_response);
+            }
+        }
+
+        [HttpPut("Return/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = StaticData.RoleAdmin)]
+        public async Task<ActionResult<APIResponse>> ReturnReservation([FromRoute] int id)
+        {
+            _response.Success = false;
+            try
+            {
+                Reservation reservationFromDb = await _unitOfWork.Reservations.GetAsync(r => r.Id == id);
+
+                if (reservationFromDb == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Messages.Add("The reservation wasn't found");
+                    return NotFound(_response);
+                }
+
+                if (reservationFromDb.PickupDate != null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Messages.Add("The reservation was already returned");
+                    return BadRequest(_response);
+                }
+
+                await _unitOfWork.Reservations.NotifyReturn(reservationFromDb);
+                Book book = await _unitOfWork.Books.GetAsync(b => b.Id == reservationFromDb.BookId);
+                await _unitOfWork.Books.IncreaseCount(book.ISBN,1);
+                await _unitOfWork.Save();
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Success = true;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.Success = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Messages.Add($"{ex.Message}");
+                return BadRequest(_response);
             }
         }
 
