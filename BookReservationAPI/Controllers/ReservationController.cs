@@ -85,12 +85,11 @@ namespace BookReservationAPI.Controllers
                 Reservation model = new()
                 {
                     ReservationEnd = reservationCreateDto.ReservationEnd,
-                    ReservationDate = reservationCreateDto.ReservationDate
+                    ReservationDate = reservationCreateDto.ReservationDate,
+                    UserId= reservationCreateDto.UserId,
                 };
 
                 var book = await _unitOfWork.Books.GetAsync(b => b.ISBN == reservationCreateDto.ISBN);
-                var user = await _unitOfWork.LocalUsers.GetAsync(u => u.UserName == reservationCreateDto.UserName);
-                model.UserId = user.Id;
                 model.BookId= book.Id;
 
                 await _unitOfWork.Reservations.AddAsync(model);
