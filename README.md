@@ -19,10 +19,5 @@ Proyecto de RESTful API desarrollado en .NET 7 utilizando el framework ASP.NET. 
 - **Entity Framework Core:** La persistencia de datos dentro del API se lleva a cabo utilizando el ORM Entity Framework Core y Microsoft SQL Server como sistema de gestión de base de datos.
 ## 📁 Esquema Visual de la Base de Datos
 <div align="center">
-	<img src="ECommerceWeb/wwwroot/images/sobre_el_proyecto/DER_oscuro.png">
+	<img src="Resources/BookReservationER.png">
 </div>
-
-## 👁️ Vista previa
-<p align="center">
-  <img width="75%" src="ECommerceWeb/wwwroot/images/sobre_el_proyecto/VistaPrevia.gif" alt="Vista previa">
-</p>
