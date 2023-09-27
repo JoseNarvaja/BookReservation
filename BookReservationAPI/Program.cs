@@ -110,3 +110,5 @@ void SeedDatabase()
         dbInitializer.Initialize();
     }
 }
+
+public partial class Program { }
