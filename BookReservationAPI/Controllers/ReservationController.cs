@@ -55,6 +55,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpPost("ReserveBook")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -85,9 +86,8 @@ namespace BookReservationAPI.Controllers
                 }
 
                 string jwt = Request.Headers.AsQueryable().FirstOrDefault(x => x.Key == "Authorization").Value.ToString().Replace("Bearer ", "");
-                JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-                JwtSecurityToken tokens = handler.ReadToken(jwt) as JwtSecurityToken;
-                string username = tokens.Claims.FirstOrDefault(claim => claim.Type == "unique_name").Value.ToString();
+                string username = GetClaimFromJwt(jwt, "unique_name");
+
                 var user = await _unitOfWork.LocalUsers.GetAsync(u => u.UserName == username);
 
                 Reservation model = new()
@@ -209,9 +209,7 @@ namespace BookReservationAPI.Controllers
 
         private async Task<IEnumerable<ReservationDto>> GetReservationsForUser(string jwt)
         {
-            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            JwtSecurityToken tokens = handler.ReadToken(jwt) as JwtSecurityToken;
-            string role = tokens.Claims.FirstOrDefault(claim => claim.Type == "role").Value.ToString();
+            string role = GetClaimFromJwt(jwt, "role");
 
             IEnumerable<ReservationDto> reservations;
             switch(role)
@@ -221,7 +219,7 @@ namespace BookReservationAPI.Controllers
                     break;
                 case StaticData.RoleCustomer:
                     HttpContext httpContext = HttpContext;
-                    string username = tokens.Claims.FirstOrDefault(claim => claim.Type == "unique_name").Value.ToString();
+                    string username = GetClaimFromJwt(jwt, "unique_name");
                     var user = await _unitOfWork.LocalUsers.GetAsync(u => u.UserName == username);
                     reservations = _mapper.Map<List<ReservationDto>>(await _unitOfWork.Reservations.GetAllAsync(reservation => reservation.UserId == user.Id));
                     break;
@@ -231,6 +229,13 @@ namespace BookReservationAPI.Controllers
             }
 
             return reservations;
+        }
+
+        private string GetClaimFromJwt(string jwt, string claim)
+        {
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            JwtSecurityToken tokens = handler.ReadToken(jwt) as JwtSecurityToken;
+            return tokens.Claims.FirstOrDefault(cl => cl.Type == claim).Value.ToString();
         }
     }
 }
