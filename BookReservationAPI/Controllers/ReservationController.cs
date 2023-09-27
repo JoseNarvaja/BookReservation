@@ -84,11 +84,17 @@ namespace BookReservationAPI.Controllers
                     return BadRequest(_response);
                 }
 
+                string jwt = Request.Headers.AsQueryable().FirstOrDefault(x => x.Key == "Authorization").Value.ToString().Replace("Bearer ", "");
+                JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+                JwtSecurityToken tokens = handler.ReadToken(jwt) as JwtSecurityToken;
+                string username = tokens.Claims.FirstOrDefault(claim => claim.Type == "unique_name").Value.ToString();
+                var user = await _unitOfWork.LocalUsers.GetAsync(u => u.UserName == username);
+
                 Reservation model = new()
                 {
                     ReservationEnd = reservationCreateDto.ReservationEnd,
                     ReservationDate = reservationCreateDto.ReservationDate,
-                    UserId= reservationCreateDto.UserId,
+                    UserId= user.Id,
                 };
 
                 var book = await _unitOfWork.Books.GetAsync(b => b.ISBN == reservationCreateDto.ISBN);
@@ -215,7 +221,7 @@ namespace BookReservationAPI.Controllers
                     break;
                 case StaticData.RoleCustomer:
                     HttpContext httpContext = HttpContext;
-                    string username = httpContext.User.Identity.Name;
+                    string username = tokens.Claims.FirstOrDefault(claim => claim.Type == "unique_name").Value.ToString();
                     var user = await _unitOfWork.LocalUsers.GetAsync(u => u.UserName == username);
                     reservations = _mapper.Map<List<ReservationDto>>(await _unitOfWork.Reservations.GetAllAsync(reservation => reservation.UserId == user.Id));
                     break;

@@ -21,7 +21,7 @@ namespace BookReservationAPI.Tests.Jwt
 
         public JwtTestBuilder WithUserName(string username)
         {
-            Claims.Add(new Claim(ClaimTypes.Upn, username));
+            Claims.Add(new Claim("unique_name", username));
             return this;
         }
 

@@ -12,7 +12,5 @@ namespace BookReservationAPI.Models.Dto
         [Required]
         [StringLength(14)]
         public string ISBN { get; set; }
-        [Required]
-        public string UserId { get; set; }
     }
 }
