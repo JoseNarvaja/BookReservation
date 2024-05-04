@@ -11,12 +11,12 @@ namespace BookReservationAPI.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    public class BookController : ControllerBase
+    public class BooksController : ControllerBase
     {
         private APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public BookController(IUnitOfWork unitOfWork, IMapper mapper)
+        public BooksController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _response = new APIResponse();
@@ -84,7 +84,7 @@ namespace BookReservationAPI.Controllers
             return _response;
         }
 
-        [HttpPost("CreateBook")]
+        [HttpPost]
         [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

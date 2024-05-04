@@ -8,11 +8,11 @@ namespace BookReservationAPI.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    public class UserController : Controller
+    public class AuthController : Controller
     {
         private readonly IUserRepository _userRepository;
         private APIResponse _response;
-        public UserController(IUserRepository userRepository)
+        public AuthController(IUserRepository userRepository)
         {
             _userRepository= userRepository;
             _response = new APIResponse();

@@ -14,20 +14,20 @@ namespace BookReservationAPI.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    public class ReservationController : Controller
+    public class ReservationsController : Controller
     {
         private APIResponse _response;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IReservationValidator _reservationValidator;
-        public ReservationController(IMapper mapper, IUnitOfWork unitOfWork, IReservationValidator reservationValidator)
+        public ReservationsController(IMapper mapper, IUnitOfWork unitOfWork, IReservationValidator reservationValidator)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _reservationValidator = reservationValidator;
             _response = new APIResponse();
         }
-        [HttpGet("GetReservations")]
+        [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -54,7 +54,7 @@ namespace BookReservationAPI.Controllers
             }
         }
 
-        [HttpPost("ReserveBook")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
