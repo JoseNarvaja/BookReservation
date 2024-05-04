@@ -6,6 +6,7 @@ using BookReservationAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Text.Json;
 
 namespace BookReservationAPI.Controllers
 {
@@ -26,14 +27,19 @@ namespace BookReservationAPI.Controllers
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetBooks()
+        public async Task<ActionResult<APIResponse>> GetBooks(int pageSize = 5, int pageNumber = 1)
         {
             try
             {
-                IEnumerable<Book> books = await _unitOfWork.Books.GetAllAsync();
+                IEnumerable<Book> books = await _unitOfWork.Books.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber);
+
+                Pagination pagination = new Pagination() { PageNumber = pageNumber, PageSize = pageSize };
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+
                 _response.Result = _mapper.Map<List<BookDto>>(books);
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.OK;
+
                 return Ok(_response);
             }
             catch (Exception e)

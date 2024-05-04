@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Net;
+using System.Text.Json;
 
 namespace BookReservationAPI.Controllers
 {
@@ -30,11 +31,15 @@ namespace BookReservationAPI.Controllers
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetCategories()
+        public async Task<ActionResult<APIResponse>> GetCategories(int pageSize = 5, int pageNumber = 1)
         {
             try
             {
-                IEnumerable<Category> categories = await _unitOfWork.Categories.GetAllAsync();
+                IEnumerable<Category> categories = await _unitOfWork.Categories.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber);
+
+                Pagination pagination = new Pagination() {PageNumber = pageNumber, PageSize = pageSize };
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+
                 _response.Result = _mapper.Map<List<CategoryDto>>(categories);
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.OK;

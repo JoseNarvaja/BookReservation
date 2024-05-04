@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Text.Json;
 
 namespace BookReservationAPI.Controllers
 {
@@ -32,12 +33,15 @@ namespace BookReservationAPI.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetReservations()
+        public async Task<ActionResult<APIResponse>> GetReservations(int pageSize = 5, int pageNumber = 1)
         {
             try
             {
                 string jwt = Request.Headers.AsQueryable().FirstOrDefault(x => x.Key == "Authorization").Value.ToString().Replace("Bearer ", "");
-                IEnumerable<ReservationDto> reservations = await GetReservationsForUser(jwt);
+                IEnumerable<ReservationDto> reservations = await GetReservationsForUser(jwt, pageSize, pageNumber);
+
+                Pagination pagination = new Pagination() { PageNumber = pageNumber, PageSize = pageSize };
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.OK;
@@ -207,7 +211,7 @@ namespace BookReservationAPI.Controllers
             }
         }
 
-        private async Task<IEnumerable<ReservationDto>> GetReservationsForUser(string jwt)
+        private async Task<IEnumerable<ReservationDto>> GetReservationsForUser(string jwt, int pageSize, int pageNumber)
         {
             string role = GetClaimFromJwt(jwt, "role");
 
@@ -215,13 +219,13 @@ namespace BookReservationAPI.Controllers
             switch(role)
             {
                 case StaticData.RoleAdmin:
-                    reservations = _mapper.Map<List<ReservationDto>>(await _unitOfWork.Reservations.GetAllAsync());
+                    reservations = _mapper.Map<List<ReservationDto>>(await _unitOfWork.Reservations.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber));
                     break;
                 case StaticData.RoleCustomer:
                     HttpContext httpContext = HttpContext;
                     string username = GetClaimFromJwt(jwt, "unique_name");
                     var user = await _unitOfWork.LocalUsers.GetAsync(u => u.UserName == username);
-                    reservations = _mapper.Map<List<ReservationDto>>(await _unitOfWork.Reservations.GetAllAsync(reservation => reservation.UserId == user.Id));
+                    reservations = _mapper.Map<List<ReservationDto>>(await _unitOfWork.Reservations.GetAllAsync(reservation => reservation.UserId == user.Id, pageSize: pageSize, pageNumber: pageNumber));
                     break;
                 default:
                     reservations = null;
