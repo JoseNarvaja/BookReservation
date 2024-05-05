@@ -75,6 +75,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<AppDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSqlConnection"));
 });
+builder.Services.AddResponseCaching();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

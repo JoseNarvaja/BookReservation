@@ -87,23 +87,19 @@ namespace BookReservationAPI.Repository
                 Name = registerRequest.Name,
                 Surname = registerRequest.Surname,
             };
-
-            try
+            
+            var result = await _userManager.CreateAsync(user, registerRequest.Password);
+            if(result.Succeeded)
             {
-                var result = await _userManager.CreateAsync(user, registerRequest.Password);
-                if(result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, StaticData.RoleCustomer);
-                    var userToReturn = _context.LocalUsers
-                        .FirstOrDefault(u => u.UserName == registerRequest.UserName);
-                    return _mapper.Map<UserDto>(userToReturn);
-                }
+                await _userManager.AddToRoleAsync(user, StaticData.RoleCustomer);
+                var userToReturn = _context.LocalUsers
+                    .FirstOrDefault(u => u.UserName == registerRequest.UserName);
+                return _mapper.Map<UserDto>(userToReturn);
             }
-            catch(Exception ex)
+            else
             {
-
+                throw new Exception("An error occurred while creating the user");
             }
-            return new UserDto();
         }
     }
 }

@@ -25,6 +25,7 @@ namespace BookReservationAPI.Controllers
         }
         [HttpGet(Name = "GetBooks")]
         [AllowAnonymous]
+        [ResponseCache(Duration = 5)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetBooks(int pageSize = 5, int pageNumber = 1)
@@ -163,10 +164,7 @@ namespace BookReservationAPI.Controllers
                 _unitOfWork.Books.Remove(model);
                 await _unitOfWork.Save();
 
-                _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Success = true;
-
-                return Ok(_response);
+                return NoContent();
             }
             catch (Exception e)
             {

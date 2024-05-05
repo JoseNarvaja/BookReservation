@@ -77,7 +77,6 @@ namespace BookReservationAPI.Controllers
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Success = true;
-                _response.Result= user;
                 return Ok(_response);
             }
             catch(Exception ex)
