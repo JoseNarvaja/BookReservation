@@ -1,15 +1,17 @@
 using BookReservationAPI;
 using BookReservationAPI.Data;
 using BookReservationAPI.Data.DbInitializer;
+using BookReservationAPI.Middleware;
 using BookReservationAPI.Models;
 using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
+using BookReservationAPI.Services;
+using BookReservationAPI.Services.Interfaces;
 using BookReservationAPI.Utility.ReservationValidation;
 using BookReservationAPI.Utility.ReservationValidation.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -79,12 +81,16 @@ builder.Services.AddResponseCaching();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IReservationValidator, ReservationValidator>();
+
+builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 
 builder.Services.AddIdentity<LocalUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
+app.UseMiddleware<BusinessExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

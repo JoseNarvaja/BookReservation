@@ -79,5 +79,10 @@ namespace BookReservationAPI.Repository
         {
             _dbSet.RemoveRange(entities);
         }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

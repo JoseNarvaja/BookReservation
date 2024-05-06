@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
+using BookReservationAPI.Exceptions;
 using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
-using BookReservationAPI.Repository;
-using BookReservationAPI.Repository.Interfaces;
+using BookReservationAPI.Services.Interfaces;
 using BookReservationAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Query;
 using System.Net;
 using System.Text.Json;
 
@@ -18,13 +16,13 @@ namespace BookReservationAPI.Controllers
     public class CategoriesController : ControllerBase
     {
         private APIResponse _response;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public CategoriesController(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly ICategoriesService _service;
+        public CategoriesController(ICategoriesService service, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _service = service;
             _response = new APIResponse();
+            _mapper = mapper;
         }
 
         [HttpGet(Name = "GetCategories")]
@@ -35,22 +33,20 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                IEnumerable<Category> categories = await _unitOfWork.Categories.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber);
+                IEnumerable<CategoryDto> categories = _mapper.Map<List<CategoryDto>>( await _service.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber));
 
                 Pagination pagination = new Pagination() {PageNumber = pageNumber, PageSize = pageSize };
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
-                _response.Result = _mapper.Map<List<CategoryDto>>(categories);
+                _response.Result = categories;
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
             }
             catch (Exception e)
             {
-                _response.Success = false;
-                _response.Messages.Add(e.Message);
+                HandleException(e);
             }
-            return _response;
+            return Ok(_response);
         }
 
         [HttpGet("{id:int}", Name ="GetCategory")]
@@ -62,35 +58,17 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                if (id <= 0)
-                {
-                    _response.Success = false;
-                    _response.Messages.Add("The id must be a correct value");
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
-                }
+                CategoryDto category = _mapper.Map<CategoryDto>(await _service.GetAsync(c => c.Id == id));
 
-                Category categoryFromDb = await _unitOfWork.Categories.GetAsync(c => c.Id == id);
-
-                if (categoryFromDb == null)
-                {
-                    _response.Success = false;
-                    _response.Messages.Add("No book was found");
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
-                }
-
-                _response.Result = _mapper.Map<CategoryDto>(categoryFromDb);
+                _response.Result = category;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Success = true;
-                return Ok(_response);
             }
             catch (Exception e)
             {
-                _response.Success = false;
-                _response.Messages.Add(e.Message);
+                HandleException(e);
             }
-            return _response;
+            return Ok(_response);
         }
 
         [HttpPost(Name = "CreateCategory")]
@@ -100,31 +78,18 @@ namespace BookReservationAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateCategory([FromBody] CategoryCreateDto categoryCreate)
         {
+            Category modelCategory = _mapper.Map<Category>(categoryCreate);
             try
             {
-                _response.Success = false;
-                if (!ModelState.IsValid || categoryCreate == null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return BadRequest(_response);
-                }
-
-                Category model = _mapper.Map<Category>(categoryCreate);
-                await _unitOfWork.Categories.AddAsync(model);
-                await _unitOfWork.Save();
-
-                _response.Result = _mapper.Map<CategoryDto>(model);
+                _response.Result = _mapper.Map<CategoryDto>(await _service.CreateAsync(modelCategory));
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetCategory", new { id = model.Id }, _response);
             }
             catch (Exception e)
             {
-                _response.Success = false;
-                _response.Messages.Add(e.Message);
+                HandleException(e);
             }
-            return _response;
+            return CreatedAtRoute("GetCategory", new { id = modelCategory.Id }, _response);
         }
 
         [HttpDelete("{id:int}",Name ="DeleteCategory")]
@@ -137,37 +102,13 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                _response.Success = false;
-                if (id <= 0)
-                {
-                    _response.Messages.Add("The id must be a correct value");
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
-                }
-
-                Category model = await _unitOfWork.Categories.GetAsync(c => c.Id == id);
-
-                if (model == null)
-                {
-                    _response.Messages.Add("No category was found");
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    NotFound(_response);
-                }
-
-                _unitOfWork.Categories.Remove(model);
-                await _unitOfWork.Save();
-
-                _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Success = true;
-
-                return Ok(_response);
+                await _service.DeleteAsync(id);
             }
             catch (Exception e)
             {
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Messages.Add(e.Message);
+                HandleException(e);
             }
-            return _response;
+            return NoContent();
         }
 
         [HttpPut("{id:int}",Name ="UpdateCategory")]
@@ -179,29 +120,41 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                _response.Success = false;
-
-                if (categoryUpdate == null || categoryUpdate.Id != id || !ModelState.IsValid)
-                {
-                    _response.Result = ModelState;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
-                }
-
                 Category model = _mapper.Map<Category>(categoryUpdate);
-                _unitOfWork.Categories.Update(model);
-                await _unitOfWork.Save();
+                await _service.UpdateAsync(model, id);
 
-                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.Success = true;
-                return Ok(_response);
             }
             catch (Exception e)
             {
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Messages.Add(e.Message);
+                HandleException(e);
             }
-            return _response;
+            return NoContent();
+        }
+
+        private void HandleException(Exception e)
+        {
+            HttpStatusCode statusCode;
+            string message;
+
+            switch (e)
+            {
+                case ArgumentException argumentException:
+                    statusCode = HttpStatusCode.BadRequest;
+                    message = argumentException.Message;
+                    break;
+                case KeyNotFoundException:
+                    statusCode = HttpStatusCode.NotFound;
+                    message = e.Message;
+                    break;
+                default:
+                    statusCode = HttpStatusCode.InternalServerError;
+                    message = "An internal error has occurred. Please try again later.";
+                    break;
+            }
+
+            throw new BusinessException(statusCode, message);
         }
     }
 }
