@@ -44,7 +44,7 @@ namespace BookReservationAPI.Controllers
             }
             catch (Exception e)
             {
-                HandleException(e);
+                return HandleException(e);
             }
             return Ok(_response);
         }
@@ -66,7 +66,7 @@ namespace BookReservationAPI.Controllers
             }
             catch (Exception e)
             {
-                HandleException(e);
+                return HandleException(e);
             }
             return Ok(_response);
         }
@@ -78,16 +78,17 @@ namespace BookReservationAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateCategory([FromBody] CategoryCreateDto categoryCreate)
         {
-            Category modelCategory = _mapper.Map<Category>(categoryCreate);
+            Category modelCategory;
             try
             {
+                modelCategory = _mapper.Map<Category>(categoryCreate);
                 _response.Result = _mapper.Map<CategoryDto>(await _service.CreateAsync(modelCategory));
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.Created;
             }
             catch (Exception e)
             {
-                HandleException(e);
+                return HandleException(e);
             }
             return CreatedAtRoute("GetCategory", new { id = modelCategory.Id }, _response);
         }
@@ -106,7 +107,7 @@ namespace BookReservationAPI.Controllers
             }
             catch (Exception e)
             {
-                HandleException(e);
+                return HandleException(e);
             }
             return NoContent();
         }
@@ -128,12 +129,12 @@ namespace BookReservationAPI.Controllers
             }
             catch (Exception e)
             {
-                HandleException(e);
+                return HandleException(e);
             }
             return NoContent();
         }
 
-        private void HandleException(Exception e)
+        private ActionResult HandleException(Exception e)
         {
             HttpStatusCode statusCode;
             string message;
@@ -144,7 +145,7 @@ namespace BookReservationAPI.Controllers
                     statusCode = HttpStatusCode.BadRequest;
                     message = argumentException.Message;
                     break;
-                case KeyNotFoundException:
+                case KeyNotFoundException notFoundException:
                     statusCode = HttpStatusCode.NotFound;
                     message = e.Message;
                     break;
