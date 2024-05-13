@@ -83,9 +83,11 @@ builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IReservationValidator, ReservationValidator>();
 
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+builder.Services.AddScoped<IBooksService, BooksService>();
 
 builder.Services.AddIdentity<LocalUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();

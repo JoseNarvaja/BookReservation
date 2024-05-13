@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using BookReservationAPI.Exceptions;
 using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
 using BookReservationAPI.Repository.Interfaces;
+using BookReservationAPI.Services.Interfaces;
 using BookReservationAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +17,15 @@ namespace BookReservationAPI.Controllers
     public class BooksController : ControllerBase
     {
         private APIResponse _response;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public BooksController(IUnitOfWork unitOfWork, IMapper mapper)
+        private IBooksService _booksService;
+        public BooksController(IUnitOfWork unitOfWork, IMapper mapper, IBooksService bookService)
         {
-            _unitOfWork = unitOfWork;
             _response = new APIResponse();
+            _booksService = bookService;
             _mapper = mapper;
         }
+
         [HttpGet(Name = "GetBooks")]
         [AllowAnonymous]
         [ResponseCache(Duration = 5)]
@@ -32,12 +35,12 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                IEnumerable<Book> books = await _unitOfWork.Books.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber);
+                IEnumerable<BookDto> books = _mapper.Map<IEnumerable<BookDto>>(await _booksService.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber));
 
                 Pagination pagination = new Pagination() { PageNumber = pageNumber, PageSize = pageSize };
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
-                _response.Result = _mapper.Map<List<BookDto>>(books);
+                _response.Result = books;
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.OK;
 
@@ -45,38 +48,20 @@ namespace BookReservationAPI.Controllers
             }
             catch (Exception e)
             {
-                _response.Success = false;
-                _response.Messages.Add(e.Message);
+                return HandleException(e);
             }
-            return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetBook")]
+        [HttpGet("{ISBN}", Name = "GetBook")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetBook([FromRoute] int id)
+        public async Task<ActionResult<APIResponse>> GetBook([FromRoute] string ISBN)
         {
             try
             {
-                if (id <= 0)
-                {
-                    _response.Success = false;
-                    _response.Messages.Add("The id must be a correct value");
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
-                }
-
-                Book bookFromDb = await _unitOfWork.Books.GetAsync(b => b.Id == id);
-
-                if (bookFromDb == null)
-                {
-                    _response.Success = false;
-                    _response.Messages.Add("No book was found");
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
-                }
+                Book bookFromDb = await _booksService.GetBookByISBNAsync(ISBN);
 
                 _response.Result = _mapper.Map<BookDto>(bookFromDb);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -85,10 +70,8 @@ namespace BookReservationAPI.Controllers
             }
             catch (Exception e)
             {
-                _response.Success = false;
-                _response.Messages.Add(e.Message);
+                return HandleException(e);
             }
-            return _response;
         }
 
         [HttpPost]
@@ -101,112 +84,79 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                _response.Success = false;
-                if (!ModelState.IsValid || bookCreate == null || bookCreate.ISBN.Length != 14)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return BadRequest(_response);
-                }
-                if (await _unitOfWork.Books.GetAsync(b => b.ISBN == bookCreate.ISBN) != null)
-                {
-                    ModelState.AddModelError("Messages", "The ISBN already exists");
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return BadRequest(_response);
-                }
-
                 Book model = _mapper.Map<Book>(bookCreate);
-                await _unitOfWork.Books.AddAsync(model);
-                await _unitOfWork.Save();
 
-                _response.Result = _mapper.Map<BookDto>(model);
+                _response.Result = _mapper.Map<BookDto>(await _booksService.CreateAsync(model));
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetBook", new { id = model.Id }, _response);
+                return CreatedAtRoute("GetBook", new { ISBN = model.ISBN }, _response);
             }
             catch (Exception e)
             {
-                _response.Success = false;
-                _response.Messages.Add(e.Message);
+                return HandleException(e);
             }
-            return _response;
         }
 
-        [HttpDelete("{id:int}", Name = "DeleteBook")]
+        [HttpDelete("{ISBN}", Name = "DeleteBook")]
         [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> DeleteBook([FromRoute] int id)
+        public async Task<ActionResult<APIResponse>> DeleteBook([FromRoute] string ISBN)
         {
             try
             {
-                _response.Success = false;
-                if (id <= 0)
-                {
-                    _response.Messages.Add("The id must be a correct value");
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
-                }
-
-                Book model = await _unitOfWork.Books.GetAsync(b => b.Id == id);
-
-                if (model == null)
-                {
-                    _response.Messages.Add("No book was found");
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
-                }
-
-                _unitOfWork.Books.Remove(model);
-                await _unitOfWork.Save();
-
+                await _booksService.DeleteAsync(ISBN);
                 return NoContent();
             }
             catch (Exception e)
             {
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Messages.Add(e.Message);
+                return HandleException(e);
             }
-            return _response;
         }
 
-        [HttpPut("{id:int}", Name ="UpdateBook")]
+        [HttpPut("{ISBN}", Name ="UpdateBook")]
         [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> UpdateBook([FromRoute] int id, [FromBody] BookUpdateDto bookUpdate)
+        public async Task<ActionResult<APIResponse>> UpdateBook([FromRoute] string ISBN, [FromBody] BookUpdateDto bookUpdate)
         {
             try
             {
-                _response.Success = false;
-
-                if(bookUpdate == null || bookUpdate.Id != id || !ModelState.IsValid)
-                {
-                    _response.Result = ModelState;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
-                }
-
-                Book model = _mapper.Map<Book>(bookUpdate);
-                _unitOfWork.Books.Update(model);
-                await _unitOfWork.Save();
-
-                _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Success = true;
-                return Ok(_response);
+                Book bookModel = _mapper.Map<Book>(bookUpdate);
+                await _booksService.UpdateAsync(bookModel, ISBN);
+                return NoContent();
             }
             catch(Exception e)
             {
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Messages.Add(e.Message);
+                return HandleException(e);
             }
-            return _response;
+        }
+
+        private ActionResult HandleException(Exception e)
+        {
+            HttpStatusCode statusCode;
+            string message;
+
+            switch (e)
+            {
+                case ArgumentException argumentException:
+                    statusCode = HttpStatusCode.BadRequest;
+                    message = argumentException.Message;
+                    break;
+                case KeyNotFoundException notFoundException:
+                    statusCode = HttpStatusCode.NotFound;
+                    message = notFoundException.Message;
+                    break;
+                default:
+                    throw e;
+            }
+
+            throw new BusinessException(statusCode, message);
         }
     }
 }

@@ -16,20 +16,20 @@ namespace BookReservationAPI.Services
 
         public async Task<Category> GetCategoryAsync(int id)
         {
-            validateID(id);
+            validatePositiveID(id);
 
             Category categoryFromDb = await base.GetAsync(c => c.Id == id);
 
             if (categoryFromDb == null)
             {
-                throw new KeyNotFoundException(message: "No category was found");
+                throw new KeyNotFoundException(message: "Unable to find the specified category");
             }
             return categoryFromDb;
         }
 
         public override async Task<Category> CreateAsync(Category entity)
         {
-            validateEntity(entity);
+            ValidateEntity(entity);
 
             return await base.CreateAsync(entity);
         }
@@ -37,13 +37,12 @@ namespace BookReservationAPI.Services
         public async Task DeleteAsync(int id)
         {
             Category dbCategory = await this.GetCategoryAsync(id);
-            _repository.Remove(dbCategory);
-            await _repository.SaveAsync();
+            await base.DeleteAsync(dbCategory);
         }
 
         public async Task UpdateAsync(Category category, int id)
         {
-            validateEntity(category);
+            ValidateEntity(category);
 
             if(category.Id != id)
             {
@@ -54,24 +53,7 @@ namespace BookReservationAPI.Services
             await _repository.SaveAsync();
         }
 
-        private void validateEntity(Category entity)
-        {
-            if(entity == null)
-            {
-                throw new ArgumentException("The category attributes can't be null");
-            }
-
-            var validationContext = new ValidationContext(entity);
-            var validationResults = new List<ValidationResult>();
-
-            if (!Validator.TryValidateObject(entity, validationContext, validationResults, validateAllProperties: true))
-            {
-                string errorMessage = string.Join(Environment.NewLine, validationResults.Select(r => r.ErrorMessage));
-                throw new ArgumentException(errorMessage);
-            }
-        }
-
-        private void validateID(int id)
+        private void validatePositiveID(int id)
         {
             if (id <= 0)
             {

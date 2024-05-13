@@ -16,7 +16,8 @@ namespace BookReservationAPI.Models
         [Required]
         public string Description { get; set; }
         [Required]
-        [StringLength(14)]
+        [StringLength(13)]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "The ISBN can only contain numbers.")]
         public string ISBN { get; set; }
         [Required]
         public string Author { get; set; }
@@ -25,10 +26,9 @@ namespace BookReservationAPI.Models
         public string ImageUrl { get; set; }
         [Required]
         public int IdCategory { get; set; }
-        [Required]
         [ForeignKey("IdCategory")]
         [ValidateNever]
-        public Category category { get; set; }
+        public Category? category { get; set; }
         [Required]
         [Range(0, int.MaxValue)]
         public int Stock { get; set; }

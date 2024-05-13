@@ -30,10 +30,12 @@ namespace BookReservationAPI.Middleware
 
                 context.Response.StatusCode = (int)ex.StatusCode;
 
+                var errorMessages = ex.Message.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
                 var response = new APIResponse
                 {
                     StatusCode = ex.StatusCode,
-                    Messages = new List<string> { ex.Message },
+                    Messages = new List<string>(errorMessages),
                     Success = false
                 };
 
