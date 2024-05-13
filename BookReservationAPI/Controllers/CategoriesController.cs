@@ -13,7 +13,7 @@ namespace BookReservationAPI.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    public class CategoriesController : ControllerBase
+    public class CategoriesController : BaseController
     {
         private APIResponse _response;
         private readonly IMapper _mapper;
@@ -132,30 +132,6 @@ namespace BookReservationAPI.Controllers
                 return HandleException(e);
             }
             return NoContent();
-        }
-
-        private ActionResult HandleException(Exception e)
-        {
-            HttpStatusCode statusCode;
-            string message;
-
-            switch (e)
-            {
-                case ArgumentException argumentException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    message = argumentException.Message;
-                    break;
-                case KeyNotFoundException notFoundException:
-                    statusCode = HttpStatusCode.NotFound;
-                    message = e.Message;
-                    break;
-                default:
-                    statusCode = HttpStatusCode.InternalServerError;
-                    message = "An internal error has occurred. Please try again later.";
-                    break;
-            }
-
-            throw new BusinessException(statusCode, message);
         }
     }
 }
