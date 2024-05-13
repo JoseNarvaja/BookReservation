@@ -1,6 +1,8 @@
-﻿using BookReservationAPI.Models;
+﻿using AutoMapper;
+using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
 using BookReservationAPI.Repository.Interfaces;
+using BookReservationAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -8,13 +10,15 @@ namespace BookReservationAPI.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    public class AuthController : Controller
+    public class AuthController : BaseController
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUsersService _service;
+        private readonly IMapper _mapper;
         private APIResponse _response;
-        public AuthController(IUserRepository userRepository)
+        public AuthController(IUsersService service, IMapper mapper)
         {
-            _userRepository= userRepository;
+            _service = service;
+            _mapper = mapper;
             _response = new APIResponse();
         }
 
@@ -26,25 +30,14 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                LoginResponseDto loginResponse = await _userRepository.Login(model);
-                if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Success = false;
-                    _response.Messages.Add("The password or username is incorrect");
-                    return BadRequest(_response);
-                }
+                _response.Result = await _service.LoginAsync(model);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Success = true;
-                _response.Result = loginResponse;
                 return Ok(_response);
             }
             catch(Exception ex)
             {
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Success= false;
-                _response.Messages.Add("An error occurred while processing your request");
-                return _response;
+                return HandleException(ex);
             }
             
         }
@@ -57,23 +50,7 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                bool usernameUnique = _userRepository.IsUnique(model.UserName);
-                if (!usernameUnique)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Success = false;
-                    _response.Messages.Add("The username is already taken");
-                    return BadRequest(_response);
-                }
-
-                var user = await _userRepository.Register(model);
-                if (user == null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Success = false;
-                    _response.Messages.Add("An error ocurred during registration");
-                    return BadRequest(_response);
-                }
+                await _service.RegisterAsync(model);
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Success = true;

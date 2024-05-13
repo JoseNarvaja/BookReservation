@@ -88,6 +88,7 @@ builder.Services.AddScoped<IReservationValidator, ReservationValidator>();
 
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<IBooksService, BooksService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 
 builder.Services.AddIdentity<LocalUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
