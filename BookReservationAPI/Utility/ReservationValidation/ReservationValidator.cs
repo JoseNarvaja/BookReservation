@@ -1,36 +1,64 @@
-﻿using BookReservationAPI.Models.Dto;
+﻿using BookReservationAPI.Models;
+using BookReservationAPI.Models.Dto;
+using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Utility.ReservationValidation.Interfaces;
-using BookReservationAPI.Utility.ReservationValidation.Validators;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookReservationAPI.Utility.ReservationValidation
 {
     public class ReservationValidator : IReservationValidator
     {
-        private List<IReservationValidator> _validators;
+        private readonly IBookRepository _bookRepository;
+        private const int MaxReservationDays = 7;
 
-        public ReservationValidator()
+        public ReservationValidator(IBookRepository bookRepository)
         {
-            _validators= new List<IReservationValidator>();
-            _validators.Add(new BookValidator());
-            _validators.Add(new DateValidator());
+            _bookRepository = bookRepository;
         }
 
-        public async Task<ReservationValidatorResult> Validate(IUnitOfWork unitOfWork, ReservationCreateDto reservationCreateDto)
+        public async Task Validate(ReservationCreateDto reservationCreateDto)
         {
-            ReservationValidatorResult result = new();
-            result.success = true;
+            await ValidateBook(reservationCreateDto);
+            await ValidateDate(reservationCreateDto);
+        }
 
-            foreach (var validator in _validators)
+        private async Task ValidateBook(ReservationCreateDto reservation)
+        {
+            Book bookFromDb = await _bookRepository.GetAsync(book => book.ISBN == reservation.ISBN);
+
+            if (bookFromDb == null)
             {
-                ReservationValidatorResult validatorResult = await validator.Validate(unitOfWork, reservationCreateDto);
-                if (! validatorResult.success)
-                {
-                    result.success = false;
-                    result.Errors.AddRange(validatorResult.Errors);
-                }
+                throw new KeyNotFoundException("The book doesn't exist");
             }
-            return result;
+
+            if (bookFromDb.Stock <= 0)
+            {
+                throw new ArgumentException("There is no stock left for this book");
+            }
+        }
+
+        private async Task ValidateDate(ReservationCreateDto reservation)
+        {
+            DateTime reservationDate = reservation.ReservationDate;
+            DateTime reservationEnd = reservation.ReservationEnd;
+            DateTime currentDate = DateTime.Now;
+
+            if (reservationDate < currentDate || reservationEnd < currentDate)
+            {
+                throw new ArgumentException("The reservation date cannot be earlier than the current moment");
+            }
+
+            if (reservationEnd < reservationDate)
+            {
+                throw new ArgumentException("The reservation end date cannot be earlier than the reservation date.");
+            }
+
+            int daysDifference = (reservationEnd - reservationDate).Days;
+            if (daysDifference > MaxReservationDays)
+            {
+                throw new ArgumentException("The reservation cannot exceed " + MaxReservationDays.ToString() + " days.");
+            }
         }
     }
 }

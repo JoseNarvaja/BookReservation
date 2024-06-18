@@ -58,10 +58,7 @@ namespace BookReservationAPI.Controllers
             }
             catch(Exception ex)
             {
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Success = false;
-                _response.Messages.Add("An error occurred while processing your request");
-                return _response;
+                return HandleException(ex);
             }
         }
     }

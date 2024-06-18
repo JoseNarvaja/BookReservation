@@ -6,6 +6,6 @@ namespace BookReservationAPI.Utility.ReservationValidation.Interfaces
 {
     public interface IReservationValidator
     {
-        Task<ReservationValidatorResult> Validate(IUnitOfWork unitOfWork, ReservationCreateDto reservationCreateDto);
+        Task Validate(ReservationCreateDto reservationCreateDto);
     }
 }
