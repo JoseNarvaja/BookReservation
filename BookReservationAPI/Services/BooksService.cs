@@ -32,7 +32,7 @@ namespace BookReservationAPI.Services
 
         public override async Task<Book> CreateAsync(Book book)
         {
-            validateISBN(book.ISBN);
+            ValidateBooksISBN(book.ISBN);
             ValidateEntity(book);
 
             return await base.CreateAsync(book);
@@ -53,6 +53,12 @@ namespace BookReservationAPI.Services
             ValidateEntity(book);
 
             Book dbBook = await _bookRepository.GetAsync(b => b.ISBN.Equals(ISBN));
+
+            if(dbBook == null)
+            {
+                throw new KeyNotFoundException("The ISBN does not match an existing book.");
+            }
+
             book.Id = dbBook.Id;
 
             _bookRepository.Update(book);
@@ -73,7 +79,7 @@ namespace BookReservationAPI.Services
             base.ValidateEntity(book);
         }
 
-        private void validateISBN(string ISBN)
+        private void ValidateBooksISBN(string ISBN)
         {
             Book dbBook = GetAsync(entity => entity.ISBN == ISBN).GetAwaiter().GetResult();
             if (dbBook != null)
@@ -84,7 +90,11 @@ namespace BookReservationAPI.Services
 
         private void validateCategoryID(int id)
         {
-            _categoriesService.GetCategoryAsync(id).GetAwaiter().GetResult();
+            Category category = _categoriesService.GetCategoryAsync(id).GetAwaiter().GetResult();
+            if(category == null)
+            {
+                throw new KeyNotFoundException("The ID does not match an existing category");
+            }
         }
 
     }
