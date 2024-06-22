@@ -42,7 +42,7 @@ namespace BookReservationAPI.Tests.Services
             _mockBookRepositoryMock.Setup(r => r.GetAsync(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()))
                 .ReturnsAsync((Book) null);
 
-            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _booksService.GetBookByISBNAsync("1234567891011"));
+            await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _booksService.GetBookByISBNAsync("1234567891011"));
         }
 
         [Theory]

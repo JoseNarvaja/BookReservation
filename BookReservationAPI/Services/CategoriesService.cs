@@ -1,8 +1,6 @@
 ﻿using BookReservationAPI.Models;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services.Interfaces;
-using System.ComponentModel.DataAnnotations;
-using System.Net.Security;
 
 namespace BookReservationAPI.Services
 {
@@ -29,6 +27,11 @@ namespace BookReservationAPI.Services
 
         public override async Task<Category> CreateAsync(Category entity)
         {
+            if(entity.Id != 0)
+            {
+                throw new ArgumentException("The id has to be 0");
+            }
+
             ValidateEntity(entity);
 
             return await base.CreateAsync(entity);
@@ -41,12 +44,18 @@ namespace BookReservationAPI.Services
         }
 
         public async Task UpdateAsync(Category category, int id)
-        {
-            ValidateEntity(category);
+        {ValidateEntity(category);
 
             if(category.Id != id)
             {
                 throw new ArgumentException("The ID in the model does not match the parameter ID.");
+            }
+
+            Category dbCategory = await _repository.GetAsync(c => c.Id == id);
+
+            if(dbCategory is null)
+            {
+                throw new KeyNotFoundException("The ID doesnt match an existing category");
             }
 
             _repository.Update(category);
