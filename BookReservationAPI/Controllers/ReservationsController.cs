@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
+using BookReservationAPI.Models.Pagination;
 using BookReservationAPI.Services.Interfaces;
 using BookReservationAPI.Utility;
+using BookReservationAPI.Utility.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -29,19 +31,20 @@ namespace BookReservationAPI.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetReservations(int pageSize = 5, int pageNumber = 1)
+        public async Task<ActionResult<APIResponse>> GetReservations([FromQuery] PaginationParams pagination)
         {
             try
             {
                 string jwt = Request.Headers.AsQueryable().FirstOrDefault(x => x.Key == "Authorization").Value.ToString().Replace("Bearer ", "");
-                IEnumerable<ReservationDto> reservations = _mapper.Map<IEnumerable<ReservationDto>>(await _service.GetAllAsync(jwt));
+                var (reservations, count) = await _service.GetAllWithCountAsync(jwt, pagination);
 
-                Pagination pagination = new Pagination() { PageNumber = pageNumber, PageSize = pageSize };
-                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+
+                PaginationHeader paginationHeader = new PaginationHeader(pagination.PageNumber, pagination.PageSize, count);
+                Response.AddPaginationHeader(paginationHeader);
 
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = reservations;
+                _response.Result = _mapper.Map<IEnumerable<ReservationDto>>(reservations);
 
                 return Ok(_response);
             }

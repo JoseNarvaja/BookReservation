@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using BookReservationAPI.Exceptions;
 using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
+using BookReservationAPI.Models.Pagination;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services.Interfaces;
 using BookReservationAPI.Utility;
+using BookReservationAPI.Utility.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -31,16 +32,17 @@ namespace BookReservationAPI.Controllers
         [ResponseCache(Duration = 5)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetBooks(int pageSize = 5, int pageNumber = 1)
+        public async Task<ActionResult<APIResponse>> GetBooks([FromQuery] PaginationParams pagination)
         {
             try
             {
-                IEnumerable<BookDto> books = _mapper.Map<IEnumerable<BookDto>>(await _booksService.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber));
+                var (books, count) = await _booksService.GetAllWithTotalCountAsync(pagination);
 
-                Pagination pagination = new Pagination() { PageNumber = pageNumber, PageSize = pageSize };
-                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+                PaginationHeader paginationHeader = new PaginationHeader(pagination.PageNumber, pagination.PageSize, count);
 
-                _response.Result = books;
+                Response.AddPaginationHeader(paginationHeader);
+
+                _response.Result = _mapper.Map<IEnumerable<BookDto>>(books);
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.OK;
 

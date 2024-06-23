@@ -1,9 +1,11 @@
 ﻿using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
+using BookReservationAPI.Models.Pagination;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services.Interfaces;
 using BookReservationAPI.Utility;
 using BookReservationAPI.Utility.ReservationValidation.Interfaces;
+using Microsoft.Identity.Client;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BookReservationAPI.Services
@@ -23,31 +25,29 @@ namespace BookReservationAPI.Services
             _validator = validator;
         }
 
-        public async Task<IEnumerable<Reservation>> GetAllAsync(string jwt, int pageSize = 5, int pageNumber = 1)
-        {
-            return await GetReservationsForUserAsync(jwt, pageSize, pageNumber);
-        }
-
-        private async Task<IEnumerable<Reservation>> GetReservationsForUserAsync(string jwt, int pageSize, int pageNumber)
+        public async Task<(IEnumerable<Reservation>, int)> GetAllWithCountAsync(string jwt, PaginationParams pagination)
         {
             string role = GetClaimFromJwt(jwt, "role");
+            int count;
 
             IEnumerable<Reservation> reservations;
             switch (role)
             {
                 case StaticData.RoleAdmin:
-                    reservations = await _reservationRepository.GetAllAsync(pageSize: pageSize, pageNumber: pageNumber);
+                    reservations = await _reservationRepository.GetAllAsync(pagination);
+                    count = await _reservationRepository.GetTotalCountAsync();
                     break;
                 case StaticData.RoleCustomer:
                     string username = GetClaimFromJwt(jwt, "unique_name");
                     var user = await _localUserRepository.GetAsync(u => u.UserName == username);
-                    reservations = await _reservationRepository.GetAllAsync(reservation => reservation.UserId == user.Id, pageSize: pageSize, pageNumber: pageNumber);
+                    reservations = await _reservationRepository.GetAllAsync(pagination, reservation => reservation.UserId == user.Id);
+                    count = await _reservationRepository.GetTotalCountAsync(reservation => reservation.UserId == user.Id);
                     break;
                 default:
                     throw new UnauthorizedAccessException("Invalid Role");
             }
 
-            return reservations;
+            return (reservations, count);
         }
 
         public async Task<Reservation> GetReservationAsync(int id)

@@ -21,6 +21,10 @@ namespace BookReservationAPI.Controllers
                     statusCode = HttpStatusCode.NotFound;
                     message = notFoundException.Message;
                     break;
+                case UnauthorizedAccessException unauthorizedException:
+                    statusCode = HttpStatusCode.Unauthorized;
+                    message = unauthorizedException.Message;
+                    break;
                 default:
                     throw e;
             }

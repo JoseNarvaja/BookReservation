@@ -1,4 +1,5 @@
 ﻿using BookReservationAPI.Data;
+using BookReservationAPI.Models.Pagination;
 using BookReservationAPI.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -19,21 +20,16 @@ namespace BookReservationAPI.Repository
             await _context.AddAsync(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, int pageSize = 5, int pageNumber = 1)
+        public async Task<IEnumerable<T>> GetAllAsync(PaginationParams pagination, Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<T> query = _dbSet.AsQueryable();
             if(filter != null)
             {
                 query = query.Where(filter);
             }
-            if (pageSize > 0)
-            {
-                if(pageSize > 100)
-                {
-                   pageSize = 100;
-                }
-                query = query.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
-            }
+
+            query = query.Skip(pagination.PageSize * (pagination.PageNumber - 1)).Take(pagination.PageSize);
+
 
             if (includeProperties != null)
             {
@@ -68,6 +64,15 @@ namespace BookReservationAPI.Repository
                 }
             }
             return await query.FirstOrDefaultAsync();
+        }
+
+        public async Task<int> GetTotalCountAsync(Expression<Func<T, bool>>? filter = null)
+        {
+            if(filter != null)
+            {
+                return await _dbSet.CountAsync(filter);
+            }
+            return await _dbSet.CountAsync();
         }
 
         public void Remove(T entity)

@@ -1,4 +1,5 @@
-﻿using BookReservationAPI.Repository.Interfaces;
+﻿using BookReservationAPI.Models.Pagination;
+using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
@@ -26,9 +27,11 @@ namespace BookReservationAPI.Services
             await _repository.SaveAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<(IEnumerable<TEntity>, int)> GetAllWithTotalCountAsync(PaginationParams pagination)
         {
-            return await _repository.GetAllAsync(pageNumber: pageNumber, pageSize: pageSize);
+            IEnumerable<TEntity> entities = await _repository.GetAllAsync(pagination);
+            int totalCount = await _repository.GetTotalCountAsync();
+            return (entities, totalCount);
         }
 
         public virtual async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter)

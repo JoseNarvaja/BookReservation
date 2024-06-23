@@ -1,9 +1,7 @@
 ﻿using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
-using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Utility.ReservationValidation.Interfaces;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BookReservationAPI.Utility.ReservationValidation
 {

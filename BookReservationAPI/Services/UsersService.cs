@@ -1,5 +1,6 @@
 ﻿using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
+using BookReservationAPI.Models.Pagination;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services.Interfaces;
 using System.Linq.Expressions;
@@ -25,6 +26,11 @@ namespace BookReservationAPI.Services
         }
 
         public Task<IEnumerable<LocalUser>> GetAllAsync(int pageSize = 5, int pageNumber = 1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<(IEnumerable<LocalUser>, int)> GetAllWithTotalCountAsync(PaginationParams pagination)
         {
             throw new NotImplementedException();
         }
