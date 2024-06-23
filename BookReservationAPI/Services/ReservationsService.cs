@@ -44,8 +44,7 @@ namespace BookReservationAPI.Services
                     reservations = await _reservationRepository.GetAllAsync(reservation => reservation.UserId == user.Id, pageSize: pageSize, pageNumber: pageNumber);
                     break;
                 default:
-                    reservations = null;
-                    break;
+                    throw new UnauthorizedAccessException("Invalid Role");
             }
 
             return reservations;
