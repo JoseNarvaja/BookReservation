@@ -26,7 +26,7 @@ namespace BookReservationAPI.Tests.Services
                 .Setup(r => r.GetAsync(It.IsAny<Expression<Func<Category, bool>>>(), It.IsAny<bool>(), It.IsAny<string?>()))
                 .ReturnsAsync(category);
 
-            Category categoryReturn = await _categoriesService.GetCategoryAsync(category.Id);
+            Category categoryReturn = await _categoriesService.GetByIdAsync(category.Id);
 
             Assert.NotNull(categoryReturn);
             Assert.Equal(category, categoryReturn);
@@ -39,7 +39,7 @@ namespace BookReservationAPI.Tests.Services
                 .Setup(r => r.GetAsync(It.IsAny<Expression<Func<Category, bool>>>(), It.IsAny<bool>(), It.IsAny<string?>()))
                 .ReturnsAsync((Category)null);
 
-            await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _categoriesService.GetCategoryAsync(5));
+            await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _categoriesService.GetByIdAsync(5));
         }
 
         [Fact]

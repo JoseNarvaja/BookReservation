@@ -1,4 +1,5 @@
 ﻿using BookReservationAPI.Models;
+using BookReservationAPI.Models.Pagination;
 using BookReservationAPI.Models.Dto;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services;
@@ -18,6 +19,7 @@ namespace BookReservationAPI.Tests.Services
         private readonly Mock<ILocalUserRepository> _localUserRepositoryMock;
         private readonly Mock<IBookRepository> _bookRepositoryMock;
         private readonly Mock<IReservationValidator> _reservationValidatorMock;
+        private readonly PaginationParams _paginationParams;
         public ReservationsServiceTests()
         {
             _reservationRepositoryMock = new Mock<IReservationRepository>();
@@ -26,6 +28,7 @@ namespace BookReservationAPI.Tests.Services
             _reservationValidatorMock = new Mock<IReservationValidator>();
             _reservationsService = new ReservationsService(_reservationRepositoryMock.Object,_localUserRepositoryMock.Object,
                 _reservationValidatorMock.Object, _bookRepositoryMock.Object);
+            _paginationParams = new PaginationParams();
         }
 
         [Fact]
@@ -34,12 +37,10 @@ namespace BookReservationAPI.Tests.Services
             string jwt = new JwtTestBuilder().WithRole(StaticData.RoleAdmin).Build();
             IEnumerable <Reservation> reservations = GetReservations();
 
+            _reservationRepositoryMock.Setup(r => r.GetAllAsync(It.IsAny<PaginationParams>(), It.IsAny<Expression<Func<Reservation, bool>>>(), It.IsAny<string>()))
+                .ReturnsAsync((reservations));
 
-            _reservationRepositoryMock.Setup(r => r.GetAllAsync(It.IsAny<Expression<Func<Reservation, bool>>>(), It.IsAny<string>(),
-                It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(reservations);
-
-            IEnumerable<Reservation> result = await _reservationsService.GetAllAsync(jwt);
+            var (result, count) = await _reservationsService.GetAllWithCountAsync(jwt, new PaginationParams());
 
             Assert.NotNull(result);
             Assert.Equal(result.Count(), reservations.Count());
@@ -57,11 +58,10 @@ namespace BookReservationAPI.Tests.Services
                 .ReturnsAsync(user);
 
             _reservationRepositoryMock
-                .Setup(r => r.GetAllAsync(It.IsAny<Expression<Func<Reservation, bool>>>(), It.IsAny<string>(),
-                    It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(r => r.GetAllAsync(It.IsAny<PaginationParams>(),It.IsAny<Expression<Func<Reservation, bool>>>(), It.IsAny<string>()))
                 .ReturnsAsync(reservations.Where(r => r.UserId == user.Id));
 
-            IEnumerable<Reservation> result = await _reservationsService.GetAllAsync(jwt);
+            var (result, count) = await _reservationsService.GetAllWithCountAsync(jwt, _paginationParams);
 
             Assert.NotNull(result);
             Assert.Equal(result.Count(), reservations.Where(r => r.UserId == user.Id).Count());
@@ -73,7 +73,7 @@ namespace BookReservationAPI.Tests.Services
         {
             string jwt = new JwtTestBuilder().WithRole("InvalidRole").Build();
 
-            await Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await _reservationsService.GetAllAsync(jwt));
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await _reservationsService.GetAllWithCountAsync(jwt, _paginationParams));
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace BookReservationAPI.Tests.Services
                 .Setup(r => r.GetAsync(It.IsAny<Expression<Func<Reservation, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()))
                 .ReturnsAsync(reservation);
 
-            Reservation result = await _reservationsService.GetReservationAsync(validId);
+            Reservation result = await _reservationsService.GetByIdAsync(validId);
 
             Assert.Equal(reservation, result);
             _reservationRepositoryMock.Verify(r =>  r.GetAsync(It.IsAny<Expression<Func<Reservation, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()), Times.Once);
@@ -101,7 +101,7 @@ namespace BookReservationAPI.Tests.Services
                 .Setup(r => r.GetAsync(It.IsAny<Expression<Func<Reservation, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()))
                 .ReturnsAsync((Reservation)null);
 
-            await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _reservationsService.GetReservationAsync(InvalidId));
+            await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _reservationsService.GetByIdAsync(InvalidId));
 
         }
 

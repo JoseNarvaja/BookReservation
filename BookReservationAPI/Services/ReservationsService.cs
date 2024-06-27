@@ -50,7 +50,7 @@ namespace BookReservationAPI.Services
             return (reservations, count);
         }
 
-        public async Task<Reservation> GetReservationAsync(int id)
+        public async Task<Reservation> GetByIdAsync(int id)
         {
             Reservation reservation = await _reservationRepository.GetAsync(r => r.Id == id);
             
@@ -106,7 +106,7 @@ namespace BookReservationAPI.Services
             return reservationFromDb;
         }
 
-        public async Task<Reservation> ReturnReservationAsync(int id)
+        public async Task<Reservation> ReturnAsync(int id)
         {
             Reservation reservationFromDb = await _reservationRepository.GetAsync(r => r.Id == id);
 

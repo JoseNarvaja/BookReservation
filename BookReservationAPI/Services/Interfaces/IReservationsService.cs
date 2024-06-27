@@ -9,7 +9,7 @@ namespace BookReservationAPI.Services.Interfaces
         Task<(IEnumerable<Reservation>, int)> GetAllWithCountAsync(string jwt, PaginationParams pagination);
         Task<Reservation> ReserveAsync(ReservationCreateDto reservationCreate, string jwt);
         Task<Reservation> PickUpAsync(int id);
-        Task<Reservation> ReturnReservationAsync(int id);
-        Task<Reservation> GetReservationAsync(int id);
+        Task<Reservation> ReturnAsync(int id);
+        Task<Reservation> GetByIdAsync(int id);
     }
 }

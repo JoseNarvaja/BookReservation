@@ -12,7 +12,7 @@ namespace BookReservationAPI.Services
             _repository = repository;
         }
 
-        public async Task<Category> GetCategoryAsync(int id)
+        public async Task<Category> GetByIdAsync(int id)
         {
             validatePositiveID(id);
 
@@ -39,7 +39,7 @@ namespace BookReservationAPI.Services
 
         public async Task DeleteAsync(int id)
         {
-            Category dbCategory = await this.GetCategoryAsync(id);
+            Category dbCategory = await this.GetByIdAsync(id);
             await base.DeleteAsync(dbCategory);
         }
 

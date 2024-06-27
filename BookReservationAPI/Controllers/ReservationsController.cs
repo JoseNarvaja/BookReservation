@@ -63,7 +63,7 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                ReservationDto reservation = _mapper.Map<ReservationDto>(await _service.GetReservationAsync(id));
+                ReservationDto reservation = _mapper.Map<ReservationDto>(await _service.GetByIdAsync(id));
                 _response.Result = reservation;
                 _response.Success = true;
                 _response.StatusCode = HttpStatusCode.OK;
@@ -135,7 +135,7 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                ReservationDto reservation = _mapper.Map<ReservationDto>(await _service.ReturnReservationAsync(id));
+                ReservationDto reservation = _mapper.Map<ReservationDto>(await _service.ReturnAsync(id));
 
                 _response.Result = reservation;
                 _response.StatusCode = HttpStatusCode.OK;

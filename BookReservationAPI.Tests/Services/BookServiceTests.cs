@@ -68,7 +68,7 @@ namespace BookReservationAPI.Tests.Services
             _mockBookRepositoryMock.Setup(r => r.GetAsync(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()))
                 .ReturnsAsync((Book)null);
 
-            _mockCategoriesServiceMock.Setup(cs => cs.GetCategoryAsync(It.IsAny<int>()))
+            _mockCategoriesServiceMock.Setup(cs => cs.GetByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(new Category { Id = 1, Name = "" });
 
             Book result = await _booksService.CreateAsync(book);
@@ -101,9 +101,9 @@ namespace BookReservationAPI.Tests.Services
             _mockBookRepositoryMock.Setup(r => r.GetAsync(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()))
                 .ReturnsAsync((Book)null);
 
-            _mockCategoriesServiceMock.Setup(s => s.GetCategoryAsync(1))
+            _mockCategoriesServiceMock.Setup(s => s.GetByIdAsync(1))
                 .ReturnsAsync(new Category() {Id = 1, Description= "" });
-            _mockCategoriesServiceMock.Setup(s => s.GetCategoryAsync(It.IsAny<int>()))
+            _mockCategoriesServiceMock.Setup(s => s.GetByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((Category)null);
 
             Assert.ThrowsAsync<ArgumentException>(async () => await _booksService.CreateAsync(book));
@@ -150,7 +150,7 @@ namespace BookReservationAPI.Tests.Services
             _mockBookRepositoryMock.Setup(r => r.SaveAsync())
                 .Returns(Task.CompletedTask);
 
-            _mockCategoriesServiceMock.Setup(r => r.GetCategoryAsync(2))
+            _mockCategoriesServiceMock.Setup(r => r.GetByIdAsync(2))
                 .ReturnsAsync(new Category() {Id= 2, Name= "test" });
 
             await _booksService.UpdateAsync(updatedBook, ISBN);
@@ -175,7 +175,7 @@ namespace BookReservationAPI.Tests.Services
             string ISBN = "1234567890123";
             Book book = GetBook(ISBN: ISBN);
 
-            _mockCategoriesServiceMock.Setup(s => s.GetCategoryAsync(1))
+            _mockCategoriesServiceMock.Setup(s => s.GetByIdAsync(1))
                 .ReturnsAsync(new Category() { Id = 1, Description = "" });
 
             _mockBookRepositoryMock.Setup(r => r.GetAsync(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()))

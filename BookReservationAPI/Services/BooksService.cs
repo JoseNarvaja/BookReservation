@@ -89,7 +89,7 @@ namespace BookReservationAPI.Services
 
         private void validateCategoryID(int id)
         {
-            Category category = _categoriesService.GetCategoryAsync(id).GetAwaiter().GetResult();
+            Category category = _categoriesService.GetByIdAsync(id).GetAwaiter().GetResult();
             if(category == null)
             {
                 throw new KeyNotFoundException("The ID does not match an existing category");

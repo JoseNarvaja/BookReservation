@@ -7,7 +7,7 @@ namespace BookReservationAPI.Services.Interfaces
     public interface ICategoriesService : IService<Category, int>
     {
         Task UpdateAsync(Category category, int id);
-        Task<Category> GetCategoryAsync(int id);
+        Task<Category> GetByIdAsync(int id);
         Task DeleteAsync(int id);
     }
 }

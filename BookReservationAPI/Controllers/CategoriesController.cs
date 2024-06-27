@@ -61,7 +61,7 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                CategoryDto category = _mapper.Map<CategoryDto>(await _service.GetCategoryAsync(id));
+                CategoryDto category = _mapper.Map<CategoryDto>(await _service.GetByIdAsync(id));
 
                 _response.Result = category;
                 _response.StatusCode = HttpStatusCode.OK;
