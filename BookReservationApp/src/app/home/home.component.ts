@@ -6,9 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  registerActivated = false;
+  registerActive = false;
 
-  registerToggle() {
-    this.registerActivated = !this.registerActivated;
+  registerToggle(active: boolean) {
+    this.registerActive = active;
   }
 }
