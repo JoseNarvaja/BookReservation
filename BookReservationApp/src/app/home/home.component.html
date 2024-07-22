@@ -2,25 +2,8 @@
   <section class="text-light mt-3">
     <h2 class="text-center">Welcome to Book Reservation Web</h2>
     <p class="lead text-center">Find the books you love and reserve them online.</p>
-    <div *ngIf="!registerActive; else elseBlock" class="d-flex">
-      <form class="card bg-primary text-light mx-auto p-3 mt-3">
-        <div class="card-body">
-          <h3 class="text-center">Login to your account</h3>
-          <hr />
-          <div class="mb-3">
-            <label for="usernameInput" class="form-label">Username</label>
-            <input type="text" class="form-control" id="usernameInput" placeholder="Username">
-          </div>
-          <div class="mb-3">
-            <label for="passwordInput" class="form-label">Password</label>
-            <input type="password" class="form-control" id="passwordInput" placeholder="Password">
-          </div>
-          <div class="d-grid gap-2 col-6 mx-auto">
-            <button type="submit" class="mt-2 btn btn-secondary">Login</button>
-          </div>
-          <p class="mt-2 text-center">Dont have an account? <a (click)="registerToggle(true)" style="cursor: pointer; font-weight: bold;">Register</a></p>
-        </div>
-      </form>
+    <div *ngIf="!registerActive; else elseBlock" >
+      <app-login class="d-flex" (cancelLogin)="registerToggle($event)"></app-login>
     </div>
     <ng-template #elseBlock>
       <app-register (cancelRegister)="registerToggle($event)" class="d-flex"></app-register>

@@ -1,35 +1,36 @@
-<form class="card bg-primary text-light mx-auto p-3 mt-3">
+<form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && register()" class="card bg-primary text-light mx-auto p-3 mt-3">
   <div class="card-body">
     <h3 class="text-center">Get Started</h3>
     <hr />
     <div class="row">
-      <div class="col-12 col-md-6 mb-3">
-        <label for="nameInput" class="form-label">Name</label>
-        <input type="text" class="form-control" id="nameInput" placeholder="Name">
+      <div class="col-12 col-md-6">
+        <app-input-text [formControl]="$any(registerForm.controls['name'])" [type]="'text'" [label]="'Name'"></app-input-text>
       </div>
-      <div class="col-12 col-md-6 mb-3">
-        <label for="lastnameInput" class="form-label">Last Name</label>
-        <input type="text" class="form-control" id="lastnameInput" placeholder="Last name">
+      <div class="col-12 col-md-6">
+        <app-input-text [formControl]="$any(registerForm.controls['surname'])" [type]="'text'" [label]="'Surname'"></app-input-text>
       </div>
     </div>
     <div class="mb-3">
-      <label for="usernameInput" class="form-label">Username</label>
-      <input type="text" class="form-control" id="usernameInput" placeholder="Username">
+      <app-input-text [formControl]="$any(registerForm.controls['username'])" [type]="'text'" [label]="'Username'"></app-input-text>
     </div>
     <div class="mb-3">
-      <label for="emailInput" class="form-label">Email</label>
-      <input type="email" class="form-control" id="emailInput" placeholder="Email">
+      <app-input-text [formControl]="$any(registerForm.controls['email'])" [type]="'email'" [label]="'Email'"></app-input-text>
     </div>
     <div class="mb-3">
-      <label for="passwordInput" class="form-label">Password</label>
-      <input type="password" class="form-control" id="passwordInput" placeholder="Password">
+      <app-input-text [formControl]="$any(registerForm.controls['password'])" [type]="'password'" [label]="'Password'"></app-input-text>
     </div>
     <div class="mb-3">
-      <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
-      <input type="password" class="form-control" id="confirmPasswordInput" placeholder="Confirm Password">
+      <app-input-text [formControl]="$any(registerForm.controls['confirmPassword'])" [type]="'password'" [label]="'Confirm Password'"></app-input-text>
+    </div>
+    <div class="row" *ngIf="validationErrors">
+      <ul class="text-danger">
+        <li *ngFor="let error of validationErrors">
+          {{error}}
+        </li>
+      </ul>
     </div>
     <div class="d-grid gap-2 col-6 mx-auto">
-      <button type="submit" class="mt-2 btn btn-secondary">Sign Up</button>
+      <button [disabled]="!registerForm.valid" type="submit" class="mt-2 btn btn-secondary">Sign Up</button>
     </div>
     <p class="mt-2 text-center">Already have an account? <a (click)="changeToLogin()" style="cursor: pointer; font-weight: bold;">Login</a></p>
   </div>
