@@ -2,7 +2,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { AuthService } from '../_services/auth.service';
 import { ApiResponse } from '../_models/apiResponse';
-import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -54,7 +53,7 @@ export class RegisterComponent implements OnInit {
     this.authService.register(values).subscribe({
       next: response => {
         console.log(response);
-        this.toastr.success("Inicie sesión para continuar", "Registro exitoso");
+        this.toastr.success("Log in to continue", "Registration successful");
         this.changeToLogin();
       },
       error: (error: ApiResponse<null>) => {
