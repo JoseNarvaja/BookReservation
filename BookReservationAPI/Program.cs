@@ -113,6 +113,8 @@ builder.Services.AddScoped<IReservationsService, ReservationsService>();
 builder.Services.AddScoped<ICopiesService, CopiesService>();
 builder.Services.AddScoped<ICopiesRepository, CopiesRepository>();
 
+builder.Services.AddScoped<IPhotoUploaderService, PhotoUploaderService>();
+
 builder.Services.AddIdentity<LocalUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
