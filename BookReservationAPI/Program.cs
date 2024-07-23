@@ -111,7 +111,7 @@ builder.Services.AddScoped<IBooksService, BooksService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IReservationsService, ReservationsService>();
 builder.Services.AddScoped<ICopiesService, CopiesService>();
-builder.Services.AddScoped<ICopyRepository, CopyRepository>();
+builder.Services.AddScoped<ICopiesRepository, CopiesRepository>();
 
 builder.Services.AddIdentity<LocalUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();

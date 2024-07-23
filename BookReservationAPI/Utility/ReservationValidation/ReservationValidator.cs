@@ -1,5 +1,6 @@
 ﻿using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
+using BookReservationAPI.Repositories.Interfaces;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Utility.ReservationValidation.Interfaces;
 
@@ -8,11 +9,13 @@ namespace BookReservationAPI.Utility.ReservationValidation
     public class ReservationValidator : IReservationValidator
     {
         private readonly IBookRepository _bookRepository;
+        private readonly ICopiesRepository _copiesRepository;
         private const int MaxReservationDays = 7;
 
-        public ReservationValidator(IBookRepository bookRepository)
+        public ReservationValidator(IBookRepository bookRepository, ICopiesRepository copiesRepository)
         {
             _bookRepository = bookRepository;
+            _copiesRepository = copiesRepository;
         }
 
         public async Task Validate(ReservationCreateDto reservationCreateDto)
@@ -29,11 +32,11 @@ namespace BookReservationAPI.Utility.ReservationValidation
             {
                 throw new KeyNotFoundException("The book doesn't exist");
             }
-            //TODO VER SU TIENE STOCK
-            //if (bookFromDb.Stock <= 0)
-            //{
-            //    throw new ArgumentException("There is no stock left for this book");
-            //}
+
+            if(_copiesRepository.IsCopyAvailable(bookFromDb.Id))
+            {
+                throw new KeyNotFoundException("No available copy was found");
+            }
         }
 
         private async Task ValidateDate(ReservationCreateDto reservation)

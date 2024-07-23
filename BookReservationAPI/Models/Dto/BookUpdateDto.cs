@@ -21,8 +21,5 @@ namespace BookReservationAPI.Models.Dto
         public string ImageUrl { get; set; }
         [Required]
         public int IdCategory { get; set; }
-        [Required]
-        [Range(0, int.MaxValue)]
-        public int Stock { get; set; }
     }
 }

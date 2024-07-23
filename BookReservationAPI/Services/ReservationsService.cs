@@ -1,6 +1,7 @@
 ﻿using BookReservationAPI.Models;
 using BookReservationAPI.Models.Dto;
 using BookReservationAPI.Models.Pagination;
+using BookReservationAPI.Repositories.Interfaces;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services.Interfaces;
 using BookReservationAPI.Utility;
@@ -14,14 +15,16 @@ namespace BookReservationAPI.Services
     {
         private readonly IReservationRepository _reservationRepository;
         private readonly ILocalUserRepository _localUserRepository;
+        private readonly ICopiesRepository _copiesRepository; 
         private readonly IReservationValidator _validator;
         private readonly IBookRepository _bookRepository;
         public ReservationsService(IReservationRepository reservationRepository, ILocalUserRepository userRepository,
-            IReservationValidator validator, IBookRepository bookRepository)
+            IReservationValidator validator, IBookRepository bookRepository, ICopiesRepository copiesRepository)
         {
             _reservationRepository = reservationRepository;
             _localUserRepository = userRepository;
             _bookRepository = bookRepository;
+            _copiesRepository = copiesRepository;
             _validator = validator;
         }
 
@@ -79,7 +82,11 @@ namespace BookReservationAPI.Services
             var book = await _bookRepository.GetAsync(b => b.ISBN == reservationCreate.ISBN);
             model.BookId = book.Id;
 
+            var Copy = await _copiesRepository.GetAsync(c => c.IsAvailable && c.BookId == book.Id);
+            model.CopyId = Copy.Id;
+
             await _reservationRepository.AddAsync(model);
+            await _reservationRepository.SaveAsync();
 
             return model;
         }
@@ -123,6 +130,7 @@ namespace BookReservationAPI.Services
             Book book = await _bookRepository.GetAsync(b => b.Id == reservationFromDb.BookId);
             await _bookRepository.SaveAsync();
             await _reservationRepository.SaveAsync();
+            await _copiesRepository.MarkAsAvailable(reservationFromDb.CopyId);
 
             return reservationFromDb;
         }

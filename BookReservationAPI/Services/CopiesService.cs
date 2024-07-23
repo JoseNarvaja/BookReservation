@@ -10,17 +10,17 @@ namespace BookReservationAPI.Services
 {
     public class CopiesService : Service<Copy, int>, ICopiesService
     {
-        private readonly ICopyRepository _copyRepository;
-        public CopiesService(ICopyRepository copyRepository) : base(copyRepository)
+        private readonly ICopiesRepository _copiesRepository;
+        public CopiesService(ICopiesRepository copiesRepository) : base(copiesRepository)
         {
-            _copyRepository = copyRepository;
+            _copiesRepository = copiesRepository;
         }
 
         public async Task DeleteByBarcodeAsync(string barcode)
         {
             ValidateBarcode(barcode);
 
-            Copy copy = await _copyRepository.GetAsync(c => c.Barcode == barcode);
+            Copy copy = await _copiesRepository.GetAsync(c => c.Barcode == barcode);
 
             if(copy is null)
             {
@@ -32,8 +32,8 @@ namespace BookReservationAPI.Services
             }
 
             copy.IsDeleted = true;
-            _copyRepository.Update(copy);
-            await _copyRepository.SaveAsync();
+            _copiesRepository.Update(copy);
+            await _copiesRepository.SaveAsync();
         }
 
         public async Task<Copy> GetByBarcodeAsync(string barcode)
@@ -59,7 +59,7 @@ namespace BookReservationAPI.Services
                 throw new ArgumentException("The Barcode in the model does not match the parameter Barcode.");
             }
 
-            Copy dbCopy = await _copyRepository.GetAsync(c => c.Barcode == barcode);
+            Copy dbCopy = await _copiesRepository.GetAsync(c => c.Barcode == barcode);
 
             if(dbCopy is null)
             {
@@ -69,11 +69,17 @@ namespace BookReservationAPI.Services
             dbCopy.BookId = copy.BookId;
             dbCopy.Barcode = copy.Barcode;
 
-            _copyRepository.Update(copy);
-            await _copyRepository.SaveAsync();
+            _copiesRepository.Update(copy);
+            await _copiesRepository.SaveAsync();
         }
 
-        private void ValidateBarcode(string barcode)
+        public override async Task<Copy> CreateAsync(Copy copy)
+        {
+            ValidateEntity(copy);
+            return await base.CreateAsync(copy);
+        }
+
+            private void ValidateBarcode(string barcode)
         {
             if (!Regex.IsMatch(barcode, @"^\d{13}$"))
             {

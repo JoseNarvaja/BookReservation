@@ -8,5 +8,6 @@ namespace BookReservationAPI.Models.Dto
     {
         public string Barcode { get; set; }
         public int BookId { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

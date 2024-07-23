@@ -3,8 +3,10 @@ using BookReservationAPI.Repository.Interfaces;
 
 namespace BookReservationAPI.Repositories.Interfaces
 {
-    public interface ICopyRepository : IRepository<Copy>
+    public interface ICopiesRepository : IRepository<Copy>
     {
         void Update(Copy copy);
+        Task MarkAsAvailable(int id);
+        bool IsCopyAvailable(int id);
     }
 }

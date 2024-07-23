@@ -18,5 +18,7 @@ namespace BookReservationAPI.Models.Dto
         public int BookId { get; set; }
         [Required]
         public string UserId { get; set; }
+        [Required]
+        public int CopyId { get; set; }
     }
 }

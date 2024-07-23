@@ -103,7 +103,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpPut("{id:int}/pickup")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -114,10 +114,7 @@ namespace BookReservationAPI.Controllers
             {
                 ReservationDto reservation = _mapper.Map<ReservationDto>(await _service.PickUpAsync(id));
 
-                _response.Result = reservation;
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Success= true;
-                return Ok(_response);
+                return NoContent();
             }
             catch(Exception ex)
             {
@@ -126,7 +123,7 @@ namespace BookReservationAPI.Controllers
         }
 
         [HttpPut("{id:int}/return")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -137,10 +134,7 @@ namespace BookReservationAPI.Controllers
             {
                 ReservationDto reservation = _mapper.Map<ReservationDto>(await _service.ReturnAsync(id));
 
-                _response.Result = reservation;
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Success = true;
-                return Ok(_response);
+                return NoContent();
             }
             catch (Exception ex)
             {
