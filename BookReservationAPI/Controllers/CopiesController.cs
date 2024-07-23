@@ -11,6 +11,8 @@ using System.Net;
 
 namespace BookReservationAPI.Controllers
 {
+    [ApiController]
+    [Route("/api/[controller]")]
     public class CopiesController : BaseController
     {
         private readonly ICopiesService _copiesService;
@@ -25,8 +27,11 @@ namespace BookReservationAPI.Controllers
             _response = new APIResponse();
         }
 
-        [HttpGet]
+        [HttpGet(Name ="GetCopies")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = StaticData.RoleAdmin)]
+        [ResponseCache(Duration = 5)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetCopies([FromQuery] PaginationParams pagination)
         {
             try
@@ -48,7 +53,7 @@ namespace BookReservationAPI.Controllers
             }
         }
 
-        [HttpGet("{barcode:string}", Name ="GetCopyByBarcode")]
+        [HttpGet("{barcode}", Name ="GetCopyByBarcode")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = StaticData.RoleAdmin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,7 +77,7 @@ namespace BookReservationAPI.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost(Name ="CreateCopy")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = StaticData.RoleAdmin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -103,12 +108,12 @@ namespace BookReservationAPI.Controllers
             return CreatedAtRoute("GetCopyByBarcode", new {Barcode = copyModel.Barcode }, _response);
         }
 
-        [HttpPut("{barcode:string}")]
+        [HttpPut("{barcode}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = StaticData.RoleAdmin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> UpdateByBarcode([FromRoute] string barcode, CopyUpdateDto copyUpdateDto)
+        public async Task<ActionResult<APIResponse>> UpdateByBarcode([FromRoute] string barcode, [FromBody] CopyUpdateDto copyUpdateDto)
         {
             try
             {
@@ -121,7 +126,7 @@ namespace BookReservationAPI.Controllers
             }
         }
 
-        [HttpDelete("{barcode: string}")]
+        [HttpDelete("{barcode}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = StaticData.RoleAdmin)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

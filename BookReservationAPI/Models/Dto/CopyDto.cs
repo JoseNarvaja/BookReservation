@@ -7,7 +7,6 @@ namespace BookReservationAPI.Models.Dto
     public class CopyDto
     {
         public string Barcode { get; set; }
-        [Required]
         public int BookId { get; set; }
     }
 }

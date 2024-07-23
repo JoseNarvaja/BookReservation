@@ -3,6 +3,8 @@ using BookReservationAPI.Data;
 using BookReservationAPI.Data.DbInitializer;
 using BookReservationAPI.Middleware;
 using BookReservationAPI.Models;
+using BookReservationAPI.Repositories;
+using BookReservationAPI.Repositories.Interfaces;
 using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services;
@@ -108,6 +110,8 @@ builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<IBooksService, BooksService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IReservationsService, ReservationsService>();
+builder.Services.AddScoped<ICopiesService, CopiesService>();
+builder.Services.AddScoped<ICopyRepository, CopyRepository>();
 
 builder.Services.AddIdentity<LocalUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
