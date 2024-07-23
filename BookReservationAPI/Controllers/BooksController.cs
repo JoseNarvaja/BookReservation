@@ -20,7 +20,7 @@ namespace BookReservationAPI.Controllers
         private APIResponse _response;
         private readonly IMapper _mapper;
         private IBooksService _booksService;
-        public BooksController(IUnitOfWork unitOfWork, IMapper mapper, IBooksService bookService)
+        public BooksController(IMapper mapper, IBooksService bookService)
         {
             _response = new APIResponse();
             _booksService = bookService;

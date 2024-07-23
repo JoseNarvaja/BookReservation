@@ -81,8 +81,6 @@ namespace BookReservationAPI.Services
 
             await _reservationRepository.AddAsync(model);
 
-            await _bookRepository.DecreaseCount(reservationCreate.ISBN, 1);
-
             return model;
         }
 
@@ -123,7 +121,6 @@ namespace BookReservationAPI.Services
             await _reservationRepository.NotifyReturn(reservationFromDb);
 
             Book book = await _bookRepository.GetAsync(b => b.Id == reservationFromDb.BookId);
-            await _bookRepository.IncreaseCount(book.ISBN, 1);
             await _bookRepository.SaveAsync();
             await _reservationRepository.SaveAsync();
 

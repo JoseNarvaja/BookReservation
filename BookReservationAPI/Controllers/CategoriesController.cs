@@ -126,15 +126,14 @@ namespace BookReservationAPI.Controllers
             {
                 Category model = _mapper.Map<Category>(categoryUpdate);
                 await _service.UpdateAsync(model, id);
-
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Success = true;
+                return NoContent();
             }
             catch (Exception e)
             {
                 return HandleException(e);
             }
-            return NoContent();
         }
+
+
     }
 }

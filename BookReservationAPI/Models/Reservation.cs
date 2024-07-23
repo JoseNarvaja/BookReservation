@@ -31,5 +31,11 @@ namespace BookReservationAPI.Models
         [ValidateNever]
         [ForeignKey("UserId")]
         public LocalUser User { get; set; }
+        [Required]
+        public int CopyId { get; set; }
+        [Required]
+        [ValidateNever]
+        [ForeignKey("CopyId")]
+        public Copy Copy { get; set; }
     }
 }

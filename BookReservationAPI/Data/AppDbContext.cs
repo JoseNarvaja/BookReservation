@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using BookReservationAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BookReservationAPI.Data
 {
@@ -10,6 +11,7 @@ namespace BookReservationAPI.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+
             base.OnModelCreating(builder);
         }
 
@@ -17,5 +19,6 @@ namespace BookReservationAPI.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<LocalUser> LocalUsers { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Copy> Copies { get; set; }
     }
 }

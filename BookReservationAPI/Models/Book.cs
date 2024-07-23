@@ -28,9 +28,7 @@ namespace BookReservationAPI.Models
         public int IdCategory { get; set; }
         [ForeignKey("IdCategory")]
         [ValidateNever]
-        public Category? category { get; set; }
-        [Required]
-        [Range(0, int.MaxValue)]
-        public int Stock { get; set; }
+        public Category category { get; set; }
+        public ICollection<Copy> Copies { get; set; }  = new List<Copy>();
     }
 }

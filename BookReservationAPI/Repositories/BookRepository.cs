@@ -15,24 +15,6 @@ namespace BookReservationAPI.Repository
             _dbContext = dbContext;
         }
 
-        public async Task DecreaseCount(string ISBN, int count)
-        {
-            Book book = await _dbContext.Books.FirstOrDefaultAsync(b => b.ISBN == ISBN);
-            book.Stock -= count;
-            _dbContext.Books.Update(book);
-            _dbContext.SaveChanges();
-            return;
-        }
-
-        public async Task IncreaseCount(string ISBN, int count)
-        {
-            Book book = await _dbContext.Books.FirstOrDefaultAsync(b => b.ISBN == ISBN);
-            book.Stock += count;
-            _dbContext.Books.Update(book);
-            _dbContext.SaveChanges();
-            return;
-        }
-
         public void Update(Book book)
         {
             _dbContext.Books.Update(book);

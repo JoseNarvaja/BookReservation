@@ -29,11 +29,11 @@ namespace BookReservationAPI.Utility.ReservationValidation
             {
                 throw new KeyNotFoundException("The book doesn't exist");
             }
-
-            if (bookFromDb.Stock <= 0)
-            {
-                throw new ArgumentException("There is no stock left for this book");
-            }
+            //TODO VER SU TIENE STOCK
+            //if (bookFromDb.Stock <= 0)
+            //{
+            //    throw new ArgumentException("There is no stock left for this book");
+            //}
         }
 
         private async Task ValidateDate(ReservationCreateDto reservation)

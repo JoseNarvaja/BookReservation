@@ -5,7 +5,5 @@ namespace BookReservationAPI.Repository.Interfaces
     public interface IBookRepository : IRepository<Book>
     {
         void Update(Book book);
-        Task DecreaseCount(string ISBN, int count);
-        Task IncreaseCount(string ISBN, int count);
     }
 }
