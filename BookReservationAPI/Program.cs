@@ -9,6 +9,7 @@ using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services;
 using BookReservationAPI.Services.Interfaces;
+using BookReservationAPI.Utility;
 using BookReservationAPI.Utility.ReservationValidation;
 using BookReservationAPI.Utility.ReservationValidation.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -113,6 +114,7 @@ builder.Services.AddScoped<IReservationsService, ReservationsService>();
 builder.Services.AddScoped<ICopiesService, CopiesService>();
 builder.Services.AddScoped<ICopiesRepository, CopiesRepository>();
 
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddScoped<IPhotoUploaderService, PhotoUploaderService>();
 
 builder.Services.AddIdentity<LocalUser, IdentityRole>()

@@ -13,7 +13,7 @@ namespace BookReservationAPI.Services
         public PhotoUploaderService(IOptions<CloudinarySettings> config)
         {
             var account = new Account(
-                config.Value.Cloud,
+                config.Value.CloudName,
                 config.Value.ApiKey,
                 config.Value.ApiSecret
                 );
@@ -21,7 +21,7 @@ namespace BookReservationAPI.Services
             _cloudinaryService = new Cloudinary(account);
         }
 
-        public async Task<string> AddPhotoAsync(IFormFile photo)
+        public async Task<(string, string)> AddPhotoAsync(IFormFile photo)
         {
             var uploadResult = new ImageUploadResult();
 
@@ -40,7 +40,7 @@ namespace BookReservationAPI.Services
                 throw new Exception("An unexpected error occurred while uploading the image");
             }
 
-            return uploadResult.SecureUrl.AbsoluteUri;
+            return (uploadResult.SecureUrl.AbsoluteUri, uploadResult.PublicId);
 
         }
 

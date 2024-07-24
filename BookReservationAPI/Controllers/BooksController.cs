@@ -20,11 +20,13 @@ namespace BookReservationAPI.Controllers
         private APIResponse _response;
         private readonly IMapper _mapper;
         private IBooksService _booksService;
-        public BooksController(IMapper mapper, IBooksService bookService)
+        private IPhotoUploaderService _photoUploaderService;
+        public BooksController(IMapper mapper, IBooksService bookService, IPhotoUploaderService photoUploaderService)
         {
             _response = new APIResponse();
             _booksService = bookService;
             _mapper = mapper;
+            _photoUploaderService = photoUploaderService;
         }
 
         [HttpGet(Name = "GetBooks")]
@@ -139,6 +141,36 @@ namespace BookReservationAPI.Controllers
             }
         }
 
-        
+        [HttpPut("{ISBN}/image")]
+        [Authorize(Roles = StaticData.RoleAdmin, AuthenticationSchemes = "Bearer")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> UpdateImage([FromRoute] string ISBN,IFormFile photo)
+        {
+            try
+            {
+                Book book = await _booksService.GetBookByISBNAsync(ISBN);
+
+                if(book.ImageUrl != null)
+                {
+                    await _photoUploaderService.DeletePhoto(book.ImageId);
+                }
+                
+                var (photoUrl, photoPublicId) = await _photoUploaderService.AddPhotoAsync(photo);
+                book.ImageUrl = photoUrl;
+                book.ImageId = photoPublicId;
+
+                await _booksService.UpdateAsync(book, book.ISBN);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return this.HandleException(e);
+            }
+        }
+
     }
 }

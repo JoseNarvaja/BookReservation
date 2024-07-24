@@ -21,9 +21,10 @@ namespace BookReservationAPI.Models
         public string ISBN { get; set; }
         [Required]
         public string Author { get; set; }
-        [Required]
         [ValidateNever]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
+        [ValidateNever]
+        public string? ImageId { get; set; }
         [Required]
         public int IdCategory { get; set; }
         [ForeignKey("IdCategory")]

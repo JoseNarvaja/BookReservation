@@ -2,7 +2,7 @@
 {
     public interface IPhotoUploaderService
     {
-        Task<string> AddPhotoAsync(IFormFile photo);
+        Task<(string, string)> AddPhotoAsync(IFormFile photo);
         Task DeletePhoto(string id);
     }
 }

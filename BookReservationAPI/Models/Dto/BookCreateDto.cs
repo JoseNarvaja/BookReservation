@@ -16,9 +16,6 @@ namespace BookReservationAPI.Models
         [Required]
         public string Author { get; set; }
         [Required]
-        [ValidateNever]
-        public string ImageUrl { get; set; }
-        [Required]
         public int IdCategory { get; set; }
     }
 }
