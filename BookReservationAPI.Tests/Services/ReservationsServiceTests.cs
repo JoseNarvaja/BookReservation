@@ -9,6 +9,7 @@ using BookReservationAPI.Utility;
 using BookReservationAPI.Utility.ReservationValidation.Interfaces;
 using Moq;
 using System.Linq.Expressions;
+using BookReservationAPI.Repositories.Interfaces;
 
 namespace BookReservationAPI.Tests.Services
 {
@@ -19,6 +20,7 @@ namespace BookReservationAPI.Tests.Services
         private readonly Mock<ILocalUserRepository> _localUserRepositoryMock;
         private readonly Mock<IBookRepository> _bookRepositoryMock;
         private readonly Mock<IReservationValidator> _reservationValidatorMock;
+        private readonly Mock<ICopiesRepository> _copiesRepositoryMock;
         private readonly PaginationParams _paginationParams;
         public ReservationsServiceTests()
         {
@@ -26,8 +28,9 @@ namespace BookReservationAPI.Tests.Services
             _localUserRepositoryMock = new Mock<ILocalUserRepository>();
             _bookRepositoryMock = new Mock<IBookRepository>();
             _reservationValidatorMock = new Mock<IReservationValidator>();
+            _copiesRepositoryMock = new Mock<ICopiesRepository>();
             _reservationsService = new ReservationsService(_reservationRepositoryMock.Object,_localUserRepositoryMock.Object,
-                _reservationValidatorMock.Object, _bookRepositoryMock.Object);
+                _reservationValidatorMock.Object, _bookRepositoryMock.Object, _copiesRepositoryMock.Object);
             _paginationParams = new PaginationParams();
         }
 
@@ -111,6 +114,7 @@ namespace BookReservationAPI.Tests.Services
             LocalUser user = new LocalUser {UserName =  "test" };
             string jwt = new JwtTestBuilder().WithUserName(user.UserName).Build();
             Book book = new Book() {Id = 1, ISBN = "1234567891234" };
+            Copy copy = new Copy() {Id = 1, Barcode = "1234512452169", BookId=1, IsAvailable=true, IsDeleted=false };
 
             _reservationValidatorMock.Setup(v => v.Validate(It.IsAny<ReservationCreateDto>()));
             _localUserRepositoryMock
@@ -119,7 +123,9 @@ namespace BookReservationAPI.Tests.Services
             _bookRepositoryMock
                 .Setup(r => r.GetAsync(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()))
                 .ReturnsAsync(book);
-            _bookRepositoryMock.Setup(r => r.DecreaseCount(It.IsAny<string>(),It.IsAny<int>()));
+            _copiesRepositoryMock
+                .Setup(c => c.GetAsync(It.IsAny<Expression<Func<Copy, bool>>>(), It.IsAny<bool>(), It.IsAny<string>()))
+                .ReturnsAsync(copy);
             _reservationRepositoryMock.Setup(r => r.AddAsync(It.IsAny<Reservation>()));
             _reservationRepositoryMock.Setup(r => r.SaveAsync());
 
@@ -137,8 +143,8 @@ namespace BookReservationAPI.Tests.Services
             Assert.Equal(reservationDto.ReservationEnd, result.ReservationEnd);
             Assert.Equal(user.Id, result.UserId);
             Assert.Equal(book.Id, result.BookId);
+            Assert.Equal(copy.Id, result.CopyId);
 
-            _bookRepositoryMock.Verify(r => r.DecreaseCount(book.ISBN, 1), Times.Once);
         }
 
         private IEnumerable<Reservation> GetReservations()

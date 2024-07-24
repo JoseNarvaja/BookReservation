@@ -194,7 +194,7 @@ namespace BookReservationAPI.Tests.Services
                 Author = author,
                 ImageUrl = "https://test.com/image.jpg",
                 IdCategory = categoryId, 
-                Stock = 10
+                //Stock = 10
             };
         }
 
