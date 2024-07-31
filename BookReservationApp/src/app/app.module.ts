@@ -12,6 +12,8 @@ import { LoginComponent } from "./login/login.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { InputTextComponent } from "./_forms/input-text/input-text.component";
 import { ToastrModule } from "ngx-toastr";
+import { BooksListComponent } from "./books/books-list/books-list.component";
+import { PaginationModule, PaginationConfig } from 'ngx-bootstrap/pagination';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,8 @@ import { ToastrModule } from "ngx-toastr";
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    InputTextComponent
+    InputTextComponent,
+    BooksListComponent,
   ],
   imports: [
     TooltipModule.forRoot(),
@@ -30,7 +33,8 @@ import { ToastrModule } from "ngx-toastr";
     ReactiveFormsModule,
     AppRoutingModule,
     ToastrModule.forRoot(),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    PaginationModule
   ],
   providers: [
 
