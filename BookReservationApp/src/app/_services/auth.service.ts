@@ -6,6 +6,7 @@ import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_models/user';
 import { ApiResponse } from '../_models/apiResponse';
 import { RegisterRequest } from '../_models/registerRequest';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class AuthService {
   baseUrl = environment.apiUrl;
   private currentUserSource = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSource.asObservable();
+  private jwtHelper = new JwtHelperService();
 
   constructor(private http: HttpClient) { }
 
@@ -47,5 +49,15 @@ export class AuthService {
 
   setToken(token: string) {
     localStorage.setItem('token', token);
+  }
+
+  isTokenValid(): boolean {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+
+    if (token && user && !this.jwtHelper.isTokenExpired(token)) {
+      return true;
+    }
+    return false;
   }
 }

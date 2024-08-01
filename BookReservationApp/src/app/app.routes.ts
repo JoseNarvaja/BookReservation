@@ -12,6 +12,7 @@ export const routes: Routes = [
       { path: 'books', component: BooksListComponent }
     ]
   },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

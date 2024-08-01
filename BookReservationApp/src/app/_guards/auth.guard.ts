@@ -23,7 +23,7 @@ class AuthPermissionService {
         if (user) {
           return true;
         }
-        this.toastr.error("User not authenticated", "You must log in to access this resource.");
+        this.toastr.error("You must log in to access this resource.", "User not authenticated");
         this.router.navigate(['/']);
         return false;
       })
