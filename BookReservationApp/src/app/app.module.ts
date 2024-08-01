@@ -14,6 +14,7 @@ import { InputTextComponent } from "./_forms/input-text/input-text.component";
 import { ToastrModule } from "ngx-toastr";
 import { BooksListComponent } from "./books/books-list/books-list.component";
 import { PaginationModule, PaginationConfig } from 'ngx-bootstrap/pagination';
+import { BooksCardComponent } from "./books/books-card/books-card.component";
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { PaginationModule, PaginationConfig } from 'ngx-bootstrap/pagination';
     RegisterComponent,
     InputTextComponent,
     BooksListComponent,
+    BooksCardComponent
   ],
   imports: [
     TooltipModule.forRoot(),

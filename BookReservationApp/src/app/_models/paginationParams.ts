@@ -1,4 +1,4 @@
 export class PaginationParams{
-  pageSize: number = 1;
+  pageSize: number = 10;
   pageNumber: number = 1;
 }

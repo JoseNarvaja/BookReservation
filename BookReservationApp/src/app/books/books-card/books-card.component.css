@@ -1,0 +1,23 @@
+.book-card:hover {
+  transform: scale(1.05, 1.05);
+  transition-duration: 500ms;
+  transition-timing-function: ease-out;
+  opacity: 0.95;
+  cursor:pointer;
+}
+
+.book-card {
+  transform: scale(1.0, 1.0);
+  transition-duration: 500ms;
+  transition-timing-function: ease-out;
+}
+
+.card-img-book {
+  max-height: 200px;
+  min-width: 250px;
+  object-fit: cover;
+}
+
+capitalize::first-letter {
+  text-transform: capitalize;
+}
