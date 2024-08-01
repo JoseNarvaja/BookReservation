@@ -1,6 +1,9 @@
 <article class="card book-card text-white m-3 bg-primary">
-  <div class="card-img-wrapper">
+  <div class="card-img-wrapper position-relative">
     <img src="{{book?.imageUrl}}" class="card-img-top card-img-book" alt="Book image" />
+    <span class="badge bg-warning position-absolute top-0 start-0 m-2">
+      {{book?.category?.name}}
+    </span>
     <div class="card-body text-center">
       <h4 class="capitalize">{{book?.title}}</h4>
       <hr />

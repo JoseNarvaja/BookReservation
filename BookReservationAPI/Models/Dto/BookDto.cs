@@ -20,5 +20,6 @@ namespace BookReservationAPI.Models.Dto
         public string ImageUrl { get; set; }
         [Required]
         public int IdCategory { get; set; }
+        public Category category { get; set; }
     }
 }

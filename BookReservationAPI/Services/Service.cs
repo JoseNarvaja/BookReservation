@@ -27,9 +27,9 @@ namespace BookReservationAPI.Services
             await _repository.SaveAsync();
         }
 
-        public async Task<(IEnumerable<TEntity>, int)> GetAllWithTotalCountAsync(PaginationParams pagination)
+        public async Task<(IEnumerable<TEntity>, int)> GetAllWithTotalCountAsync(PaginationParams pagination, string? includeProperties = null)
         {
-            IEnumerable<TEntity> entities = await _repository.GetAllAsync(pagination);
+            IEnumerable<TEntity> entities = await _repository.GetAllAsync(pagination, includeProperties: includeProperties);
             int totalCount = await _repository.GetTotalCountAsync();
             return (entities, totalCount);
         }

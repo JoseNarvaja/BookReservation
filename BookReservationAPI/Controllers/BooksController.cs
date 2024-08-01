@@ -38,7 +38,7 @@ namespace BookReservationAPI.Controllers
         {
             try
             {
-                var (books, count) = await _booksService.GetAllWithTotalCountAsync(pagination);
+                var (books, count) = await _booksService.GetAllWithTotalCountAsync(pagination, includeProperties: "category");
 
                 PaginationHeader paginationHeader = new PaginationHeader(pagination.PageNumber, pagination.PageSize, count);
 

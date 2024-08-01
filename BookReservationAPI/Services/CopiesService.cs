@@ -69,7 +69,7 @@ namespace BookReservationAPI.Services
             dbCopy.BookId = copy.BookId;
             dbCopy.Barcode = copy.Barcode;
 
-            _copiesRepository.Update(copy);
+            _copiesRepository.Update(dbCopy);
             await _copiesRepository.SaveAsync();
         }
 
