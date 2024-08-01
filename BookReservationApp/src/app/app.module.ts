@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { AppComponent } from "./app.component";
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { HomeComponent } from "./home/home.component";
 import { BrowserModule } from "@angular/platform-browser";
 import { NavbarComponent } from "./navbar/navbar.component";
@@ -15,6 +15,8 @@ import { ToastrModule } from "ngx-toastr";
 import { BooksListComponent } from "./books/books-list/books-list.component";
 import { PaginationModule, PaginationConfig } from 'ngx-bootstrap/pagination';
 import { BooksCardComponent } from "./books/books-card/books-card.component";
+import { NgxSpinnerModule } from "ngx-spinner";
+import { LoadingInterceptor } from "./_interceptors/loading.interceptor";
 
 @NgModule({
   declarations: [
@@ -36,10 +38,13 @@ import { BooksCardComponent } from "./books/books-card/books-card.component";
     AppRoutingModule,
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
-    PaginationModule
+    PaginationModule,
+    NgxSpinnerModule.forRoot({
+      type: 'ball-spin-clockwise'
+    })
   ],
   providers: [
-
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
