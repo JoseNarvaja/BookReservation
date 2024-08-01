@@ -57,7 +57,7 @@ export class RegisterComponent implements OnInit {
         this.changeToLogin();
       },
       error: (error: ApiResponse<null>) => {
-        console.log(error);
+        this.toastr.error("An error ocurred while registering", "Error");
         this.validationErrors = error.messages;
       }
     });
