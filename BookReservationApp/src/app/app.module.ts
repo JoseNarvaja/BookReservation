@@ -17,6 +17,7 @@ import { PaginationModule, PaginationConfig } from 'ngx-bootstrap/pagination';
 import { BooksCardComponent } from "./books/books-card/books-card.component";
 import { NgxSpinnerModule } from "ngx-spinner";
 import { LoadingInterceptor } from "./_interceptors/loading.interceptor";
+import { RequestJwtInterceptor } from "./_interceptors/request-jwt.interceptor";
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { LoadingInterceptor } from "./_interceptors/loading.interceptor";
     })
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: RequestJwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
