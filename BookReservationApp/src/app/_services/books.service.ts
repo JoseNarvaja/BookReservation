@@ -42,6 +42,14 @@ export class BooksService {
     )
   }
 
+  getBook(isbn: string): Observable<Book> {
+    return this.http.get<ApiResponse<Book>>(this.baseUrl + '/books/' + isbn).pipe(
+      map((response: ApiResponse<Book>) => {
+        return response.result;
+        })
+    );
+  }
+
   getPaginationParams() {
     return this.paginationParams;
   }
