@@ -146,5 +146,28 @@ namespace BookReservationAPI.Controllers
             }
 
         }
+
+        [HttpGet("available/{isbn}", Name = "GetAvailableCopiesCount")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> GetAvailableCopiesCount([FromRoute] string isbn)
+        {
+            try
+            {
+                var availableCopiesCount = await _copiesService.GetAvailableCopiesCountAsync(isbn);
+                _response.Result = new {availableCopiesCount = availableCopiesCount };
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Success = true;
+
+                return Ok(_response);
+            }
+            catch (Exception e)
+            {
+                return HandleException(e);
+            }
+        }
     }
 }

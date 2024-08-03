@@ -8,5 +8,6 @@ namespace BookReservationAPI.Repositories.Interfaces
         void Update(Copy copy);
         Task MarkAsAvailable(int id);
         bool IsCopyAvailable(int id);
+        Task<int> GetAvailableCopiesCountByISBN(string isbn);
     }
 }

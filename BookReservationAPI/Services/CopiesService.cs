@@ -73,6 +73,12 @@ namespace BookReservationAPI.Services
             await _copiesRepository.SaveAsync();
         }
 
+        public async Task<int> GetAvailableCopiesCountAsync(string isbn)
+        {
+            int availableCopiesCount = await _copiesRepository.GetAvailableCopiesCountByISBN(isbn);
+            return availableCopiesCount;
+        }
+
         public override async Task<Copy> CreateAsync(Copy copy)
         {
             ValidateEntity(copy);

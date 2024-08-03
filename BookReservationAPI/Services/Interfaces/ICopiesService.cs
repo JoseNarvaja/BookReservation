@@ -8,5 +8,6 @@ namespace BookReservationAPI.Services.Interfaces
         Task<Copy> GetByBarcodeAsync(string barcode);
         Task UpdateAsync(string barcode, Copy copy);
         Task DeleteByBarcodeAsync(string barcode);
+        Task<int> GetAvailableCopiesCountAsync(string isbn);
     }
 }
