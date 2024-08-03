@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Book } from '../../_models/book';
 import { Observable, map } from 'rxjs';
 
@@ -9,10 +9,9 @@ import { Observable, map } from 'rxjs';
   styleUrl: './book-detail.component.css'
 })
 export class BookDetailComponent implements OnInit {
-  book: Book = {} as Book
-    ;
+  book: Book = {} as Book;
 
-  constructor(private activatedRoute: ActivatedRoute) { }
+  constructor(private activatedRoute: ActivatedRoute, private route: Router) { }
 
   ngOnInit(): void {
     this.activatedRoute.data.pipe(map(data => data['book']))
@@ -21,5 +20,9 @@ export class BookDetailComponent implements OnInit {
           this.book = book;
         }
       });
+  }
+
+  navigateToReserve(): void {
+    this.route.navigateByUrl(`/books/${this.book.isbn}/reserve`);
   }
 }

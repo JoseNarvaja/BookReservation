@@ -1,3 +1,22 @@
-<p>book-detail works!</p>
-<h1>{{book.title}}</h1>
-<p>{{book.description}}</p>
+<div class="container row m-3 border rounded p-4 mx-auto bg-primary text-white shadow">
+  <section class="col-md-4 col-12 border-end border-secondary">
+    <img src="{{book?.imageUrl || './assets/bookCover.jpg'}}" alt="Book cover image" class="card-img-top img-thumbnail" />
+    <h3 class="text-center mt-2">{{book?.title}}</h3>
+    <hr />
+    <dl class="row">
+      <dt class="col-sm-4">Author</dt>
+      <dd class="col-sm-8">{{book?.author}}</dd>
+      <dt class="col-sm-4">ISBN</dt>
+      <dd class="col-sm-8">{{book?.isbn}}</dd>
+    </dl>
+    <hr />
+    <div class="btn-group d-flex">
+      <button class="btn btn-success my-1" (click)="navigateToReserve()">Reserve Book</button>
+    </div>
+  </section>
+  <aside class="col-md-8 col-12 rounded p-3">
+    <h2 class="text-center">Description</h2>
+    <hr />
+    <p class="text-justify">{{book?.description}}</p>
+  </aside>
+</div>
