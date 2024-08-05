@@ -23,13 +23,22 @@ namespace BookReservationAPI.Repositories
 
         public bool IsCopyAvailable(int id)
         {
-            return _context.Copies.Any(c => c.IsAvailable && !c.IsDeleted && c.BookId == id );
+            return _context.Copies.Any(c => c.IsAvailable && !c.IsDeleted && c.BookId == id);
         }
 
         public async Task MarkAsAvailable(int id)
         {
             var copy = await _context.Copies.FindAsync(id);
             copy.IsAvailable = true;
+
+            _context.Update(copy);
+            _context.SaveChanges();
+        }
+
+        public async Task MarkAsUnavailable(int id)
+        {
+            var copy = await _context.Copies.FindAsync(id);
+            copy.IsAvailable = false;
 
             _context.Update(copy);
             _context.SaveChanges();

@@ -10,7 +10,7 @@ namespace BookReservationAPI.Utility.ReservationValidation
     {
         private readonly IBookRepository _bookRepository;
         private readonly ICopiesRepository _copiesRepository;
-        private const int MaxReservationDays = 7;
+        private const int MaxReservationDays = 90;
 
         public ReservationValidator(IBookRepository bookRepository, ICopiesRepository copiesRepository)
         {
@@ -33,7 +33,7 @@ namespace BookReservationAPI.Utility.ReservationValidation
                 throw new KeyNotFoundException("The book doesn't exist");
             }
 
-            if(_copiesRepository.IsCopyAvailable(bookFromDb.Id))
+            if(!_copiesRepository.IsCopyAvailable(bookFromDb.Id))
             {
                 throw new KeyNotFoundException("No available copy was found");
             }

@@ -82,11 +82,14 @@ namespace BookReservationAPI.Services
             var book = await _bookRepository.GetAsync(b => b.ISBN == reservationCreate.ISBN);
             model.BookId = book.Id;
 
-            var Copy = await _copiesRepository.GetAsync(c => c.IsAvailable && c.BookId == book.Id);
-            model.CopyId = Copy.Id;
+            var copy = await _copiesRepository.GetAsync(c => c.IsAvailable && c.BookId == book.Id);
+            model.CopyId = copy.Id;
 
             await _reservationRepository.AddAsync(model);
             await _reservationRepository.SaveAsync();
+
+            await _copiesRepository.MarkAsUnavailable(copy.Id);
+            await _copiesRepository.SaveAsync();
 
             return model;
         }
