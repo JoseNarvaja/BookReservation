@@ -1,11 +1,11 @@
 import { HttpClient, HttpParams, HttpResponseBase } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PaginationParams } from '../_models/paginationParams';
 import { Book } from '../_models/book';;
 import { environment } from '../environment/environment';
 import { Observable, map } from 'rxjs';
-import { ApiResponse } from '../_models/apiResponse';
-import { PaginatedResponse, Pagination } from '../_models/paginatedResponse';
+import { PaginationParams } from '../_models/pagination-params';
+import { ApiResponse } from '../_models/api-response';
+import { PaginatedResponse } from '../_models/paginated-response';
 
 @Injectable({
   providedIn: 'root'

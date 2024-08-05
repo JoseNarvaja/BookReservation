@@ -1,5 +1,4 @@
-import { ApiResponse } from "./apiResponse";
-
+import { ApiResponse } from "./api-response";
 export interface Pagination {
   pageNumber: number;
   pageSize: number;

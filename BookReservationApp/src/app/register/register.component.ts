@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { AuthService } from '../_services/auth.service';
-import { ApiResponse } from '../_models/apiResponse';
 import { ToastrService } from 'ngx-toastr';
+import { ApiResponse } from '../_models/api-response';
 
 @Component({
   selector: 'app-register',

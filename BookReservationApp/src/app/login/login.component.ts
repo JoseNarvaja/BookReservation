@@ -1,10 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
-import { LoginRequest } from '../_models/loginRequest';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { ApiResponse } from '../_models/apiResponse';
 import { Router } from '@angular/router';
+import { LoginRequest } from '../_models/login-request';
+import { ApiResponse } from '../_models/api-response';
 
 @Component({
   selector: 'app-login',

@@ -15,6 +15,8 @@ export class ReservationsService {
   constructor(private http: HttpClient) { }
 
   reserveBook(reservationCreateDto: ReservationCreateDto): Observable<ApiResponse<ReservationDto>> {
+    console.log("DENTRO DE RESERVATION SERVICE: ");
+    console.log(reservationCreateDto);
     return this.http.post<ApiResponse<ReservationDto>>(this.baseUrl + '/reservations', reservationCreateDto);
   }
 }

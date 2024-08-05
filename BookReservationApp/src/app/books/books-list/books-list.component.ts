@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BooksService } from '../../_services/books.service';
 import { Book } from '../../_models/book';
-import { PaginationParams } from '../../_models/paginationParams';
-import { PaginatedResponse, Pagination } from '../../_models/paginatedResponse';
 import { ToastrService } from 'ngx-toastr';
+import { PaginatedResponse, Pagination } from '../../_models/paginated-response';
+import { PaginationParams } from '../../_models/pagination-params';
 
 @Component({
   selector: 'app-books-list',
@@ -24,7 +24,6 @@ export class BooksListComponent implements OnInit {
   }
 
   loadBooks() {
-    console.log("PAGINATION PARAMS:\nPNumber" + this.paginationParams?.pageNumber + "\nPNumber" + this.paginationParams?.pageSize);
     if (this.paginationParams) {
       this.bookService.setPaginationParams(this.paginationParams);
       this.bookService.getBooks(this.paginationParams).subscribe({

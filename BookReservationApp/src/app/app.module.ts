@@ -18,6 +18,8 @@ import { BooksCardComponent } from "./books/books-card/books-card.component";
 import { NgxSpinnerModule } from "ngx-spinner";
 import { LoadingInterceptor } from "./_interceptors/loading.interceptor";
 import { RequestJwtInterceptor } from "./_interceptors/request-jwt.interceptor";
+import { ReservationFormComponent } from "./reservations/reservation-form/reservation-form.component";
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,8 @@ import { RequestJwtInterceptor } from "./_interceptors/request-jwt.interceptor";
     RegisterComponent,
     InputTextComponent,
     BooksListComponent,
-    BooksCardComponent
+    BooksCardComponent,
+    ReservationFormComponent
   ],
   imports: [
     TooltipModule.forRoot(),
@@ -42,7 +45,8 @@ import { RequestJwtInterceptor } from "./_interceptors/request-jwt.interceptor";
     PaginationModule,
     NgxSpinnerModule.forRoot({
       type: 'ball-spin-clockwise'
-    })
+    }),
+    BsDatepickerModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },

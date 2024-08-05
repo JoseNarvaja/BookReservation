@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environment/environment';
-import { LoginRequest } from '../_models/loginRequest';
 import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_models/user';
-import { ApiResponse } from '../_models/apiResponse';
-import { RegisterRequest } from '../_models/registerRequest';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { ApiResponse } from '../_models/api-response';
+import { LoginRequest } from '../_models/login-request';
+import { RegisterRequest } from '../_models/register-request';
 
 @Injectable({
   providedIn: 'root'

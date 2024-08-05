@@ -1,0 +1,59 @@
+<form [formGroup]="reservationForm" (ngSubmit)="reservationForm.valid && reserveBook()" class="container card text-bg-primary mt-3 p-3">
+  <h3 class="text-center">Reserve this book</h3>
+  <div class="card-header row">
+    <div class="col-4 border-end border-secondary">
+      <img class="img-fluid rounded" src="{{book?.imageUrl}}" />
+    </div>
+    <div class="col-8">
+      <div class="row">
+        <dt class="col-sm-4">Title</dt>
+        <dd class="col-sm-8">{{book?.title}}</dd>
+        <dt class="col-sm-4">Author</dt>
+        <dd class="col-sm-8">{{book?.author}}</dd>
+        <dt class="col-sm-4">ISBN</dt>
+        <dd class="col-sm-8">{{book?.isbn}}</dd>
+        <dt class="col-sm-4">Category</dt>
+        <dd class="col-sm-8">{{book?.category?.name}}</dd>
+      </div>
+      <div class="d-flex justify-content-center mt-2">
+        <span class="badge text-bg-success text-center" *ngIf="isAnyAvailable">Book Available</span>
+        <span class="badge text-bg-danger" *ngIf="!isAnyAvailable">Book Unavailable</span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <label for="reservationRange" class="form-label">Select Reservation dates</label>
+    <input type="text"
+           class="form-control mb-3"
+           id="reservationRange"
+           placeholder="Select Dates"
+           bsDaterangepicker
+           [bsConfig]="{ rangeInputFormat : 'MMMM do YYYY', showWeekNumbers: false }"
+           formControlName="reservationRange"
+           [minDate]="minDate"
+           [maxDate]="maxDate"
+           [daysDisabled]="[6,0]"
+           required
+           [class.is-invalid]="reservationForm.get('reservationRange')?.touched && reservationForm.get('reservationRange')?.invalid" />
+    <div class="invalid-feedback" *ngIf="reservationForm.get('reservationRange')?.errors?.['required']">
+      A date range is required
+    </div>
+    <div class="invalid-feedback" *ngIf="reservationForm.get('reservationRange')?.errors?.['dateRangeInvalid']">
+      <p>The reservation extension cannot be over 90 days.</p>
+    </div>
+  </div>
+  <div class="row" *ngIf="validationErrors.length > 0">
+    <ul class="text-danger">
+      <li *ngFor="let error of validationErrors">
+        {{error}}
+      </li>
+    </ul>
+  </div>
+  <div class="card-footer">
+    <div class="d-grid gap-2 col-6 mx-auto">
+      <button [disabled]="!reservationForm.valid" type="submit" class="mt-2 btn btn-success">
+        Reserve this book
+      </button>
+    </div>
+  </div>
+</form>

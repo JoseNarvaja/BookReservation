@@ -1,5 +1,5 @@
 export interface ReservationCreateDto {
-  ReservationDate: Date,
-  ReservationEnd: Date,
+  reservationDate: string,
+  reservationEnd: string,
   ISBN: string
 }
