@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
       userName: this.loginForm.get('username')?.value,
       password: this.loginForm.get('password')?.value,
     };
-
+    /*
     this.authService.login(loginRequest).subscribe(
       () => {
         this.toAstrService.success("Login successful. Welcome back!");
@@ -51,7 +51,19 @@ export class LoginComponent implements OnInit {
         this.toAstrService.error(error.messages.join(", "), 'Login failed');
         console.error('Login failed', error);
       }
-    );
+    );*/
+
+    this.authService.login(loginRequest).subscribe({
+      next: () => {
+        this.toAstrService.success("Login successful. Welcome back!");
+        this.router.navigateByUrl("/books");
+      },
+      error: (error) => {
+        console.log(error);
+        this.toAstrService.error(error.messages.join(", "), 'Login failed');
+        console.error('Login failed', error);
+      }
+    })
   }
 
 }

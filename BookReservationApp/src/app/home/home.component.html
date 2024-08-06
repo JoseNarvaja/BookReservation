@@ -1,12 +1,10 @@
-<main class="row px-3 pb-3 image-background">
-  <section class="text-light mt-3">
-    <h2 class="text-center">Welcome to Book Reservation Web</h2>
-    <p class="lead text-center">Find the books you love and reserve them online.</p>
-    <div *ngIf="!registerActive; else elseBlock" >
-      <app-login class="d-flex" (cancelLogin)="registerToggle($event)"></app-login>
-    </div>
-    <ng-template #elseBlock>
-      <app-register (cancelRegister)="registerToggle($event)" class="d-flex"></app-register>
-    </ng-template>
-  </section>
-</main>
+<section class="row p-4 text-light">
+  <h2 class="text-center">Welcome to Book Reservation Web</h2>
+  <p class="lead text-center">Find the books you love and reserve them online.</p>
+  <div *ngIf="!registerActive; else elseBlock">
+    <app-login class="d-flex" (cancelLogin)="registerToggle($event)"></app-login>
+  </div>
+  <ng-template #elseBlock>
+    <app-register (cancelRegister)="registerToggle($event)" class="d-flex"></app-register>
+  </ng-template>
+</section>

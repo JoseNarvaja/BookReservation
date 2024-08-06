@@ -3,26 +3,30 @@ import { Injectable } from '@angular/core';
 import { Book } from '../_models/book';;
 import { environment } from '../environment/environment';
 import { Observable, map } from 'rxjs';
-import { PaginationParams } from '../_models/pagination-params';
 import { ApiResponse } from '../_models/api-response';
 import { PaginatedResponse } from '../_models/paginated-response';
+import { BooksParams } from '../_models/books-params';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BooksService {
   baseUrl = environment.apiUrl;
-  paginationParams: PaginationParams| undefined;
+  booksParams: BooksParams = new BooksParams;
 
   constructor(private http: HttpClient) {
-    this.paginationParams = new PaginationParams();
   }
 
-  getBooks(paginationParams: PaginationParams): Observable<PaginatedResponse<Book[]>> {
+  getBooks(booksParams: BooksParams): Observable<PaginatedResponse<Book[]>> {
+    console.log("REQUEST ENVIADA");
     let httpParams = new HttpParams();
 
-    httpParams = httpParams.append('pageNumber', paginationParams.pageNumber.toString());
-    httpParams = httpParams.append('pageSize', paginationParams.pageSize.toString());
+    httpParams = httpParams.append('pageNumber', booksParams.paginationParams.pageNumber.toString());
+    httpParams = httpParams.append('pageSize', booksParams.paginationParams.pageSize.toString());
+
+    if (booksParams.title?.length > 1) {
+      httpParams = httpParams.append('title', booksParams.title);
+    }
 
     return this.http.get<ApiResponse<Book[]>>(this.baseUrl + '/books', { params: httpParams, observe: 'response' }).pipe(
       map(response => {
@@ -50,11 +54,11 @@ export class BooksService {
     );
   }
 
-  getPaginationParams() {
-    return this.paginationParams;
+  getBooksParams() {
+    return this.booksParams;
   }
 
-  setPaginationParams(paginationParams: PaginationParams) {
-    this.paginationParams = paginationParams;
+  setBooksParams(booksParams: BooksParams) {
+    this.booksParams = booksParams;
   }
 }

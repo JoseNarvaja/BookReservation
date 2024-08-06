@@ -27,7 +27,7 @@ export class ReservationFormComponent implements OnInit {
     private router: Router) {
     this.minDate = new Date();
     this.maxDate = new Date();
-    this.maxDate.setDate(this.maxDate.getDate() + 185);
+    this.maxDate.setDate(this.maxDate.getDate() + 150);
   }
 
   ngOnInit(): void {
@@ -51,7 +51,8 @@ export class ReservationFormComponent implements OnInit {
       })
     }
     else {
-      //todo
+      this.toastr.error("Error", "The book wasn't found");
+      this.router.navigateByUrl("/books");
     }
   }
 
@@ -88,9 +89,9 @@ export class ReservationFormComponent implements OnInit {
           this.toastr.success("Your reservation was placed", "Book reserved successfully");
           this.router.navigateByUrl("/books");
         },
-        error: (response) => {
-          console.log(response);
+        error: (response: ApiResponse<null>) => {
           this.toastr.error("An error ocurred while placing your reservation", "Error");
+          this.validationErrors = response.messages;
         }
       });
     }
