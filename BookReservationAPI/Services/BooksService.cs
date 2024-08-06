@@ -1,6 +1,9 @@
 ﻿using BookReservationAPI.Models;
+using BookReservationAPI.Models.Pagination;
+using BookReservationAPI.Repository;
 using BookReservationAPI.Repository.Interfaces;
 using BookReservationAPI.Services.Interfaces;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace BookReservationAPI.Services
@@ -13,6 +16,19 @@ namespace BookReservationAPI.Services
         {
             _bookRepository = bookRepository;
             _categoriesService = categoriesService;
+        }
+
+        public async Task<(IEnumerable<Book>, int)> GetAllWithTotalCountAsync(BooksParams bookParams)
+        {
+            PaginationParams pagination = new PaginationParams
+            {
+                PageNumber = bookParams.PageNumber,
+                PageSize = bookParams.PageSize,
+            };
+
+            Expression<Func<Book, bool>> filter = b => (string.IsNullOrEmpty(bookParams.Title) || b.Title.Contains(bookParams.Title));
+
+            return await base.GetAllWithTotalCountAsync(pagination, filter, includeProperties: "category");
         }
 
         public async Task<Book> GetBookByISBNAsync(string ISBN)

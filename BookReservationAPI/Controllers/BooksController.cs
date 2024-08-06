@@ -34,13 +34,13 @@ namespace BookReservationAPI.Controllers
         [ResponseCache(Duration = 5)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetBooks([FromQuery] PaginationParams pagination)
+        public async Task<ActionResult<APIResponse>> GetBooks([FromQuery] BooksParams booksParams)
         {
             try
             {
-                var (books, count) = await _booksService.GetAllWithTotalCountAsync(pagination, includeProperties: "category");
+                var (books, count) = await _booksService.GetAllWithTotalCountAsync(booksParams);
 
-                PaginationHeader paginationHeader = new PaginationHeader(pagination.PageNumber, pagination.PageSize, count);
+                PaginationHeader paginationHeader = new PaginationHeader(booksParams.PageNumber, booksParams.PageSize, count);
 
                 Response.AddPaginationHeader(paginationHeader);
 

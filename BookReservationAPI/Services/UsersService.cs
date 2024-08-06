@@ -30,7 +30,7 @@ namespace BookReservationAPI.Services
             throw new NotImplementedException();
         }
 
-        public Task<(IEnumerable<LocalUser>, int)> GetAllWithTotalCountAsync(PaginationParams pagination, string? includeProperties = null)
+        public Task<(IEnumerable<LocalUser>, int)> GetAllWithTotalCountAsync(PaginationParams pagination,Expression<Func<LocalUser, bool>>? filter, string? includeProperties = null)
         {
             throw new NotImplementedException();
         }
