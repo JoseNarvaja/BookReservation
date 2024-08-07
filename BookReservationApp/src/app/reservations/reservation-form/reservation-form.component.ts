@@ -46,7 +46,9 @@ export class ReservationFormComponent implements OnInit {
     if (this.book) {
       this.copiesService.getAvailableCopiesCount(this.book.isbn).subscribe({
         next: response => {
+          console.log(response);
           this.isAnyAvailable = (response.result.availableCopiesCount > 0) ? true : false;
+          console.log(this.isAnyAvailable);
         }
       })
     }

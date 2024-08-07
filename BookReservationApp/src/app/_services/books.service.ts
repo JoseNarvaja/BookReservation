@@ -18,7 +18,6 @@ export class BooksService {
   }
 
   getBooks(booksParams: BooksParams): Observable<PaginatedResponse<Book[]>> {
-    console.log("REQUEST ENVIADA");
     let httpParams = new HttpParams();
 
     httpParams = httpParams.append('pageNumber', booksParams.paginationParams.pageNumber.toString());

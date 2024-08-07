@@ -52,7 +52,7 @@
   </div>
   <div class="card-footer">
     <div class="d-grid gap-2 col-6 mx-auto">
-      <button [disabled]="!reservationForm.valid" type="submit" class="mt-2 btn btn-success">
+      <button [disabled]="!reservationForm.valid || !isAnyAvailable" type="submit" class="mt-2 btn btn-success">
         Reserve this book
       </button>
     </div>

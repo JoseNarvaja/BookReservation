@@ -1,0 +1,67 @@
+<section class="container-fluid rounded bg-primary p-3">
+  <h3 class="text-center text-white">Reservation list</h3>
+  <table *ngIf="reservations && reservations.length > 0; else noReservationsFound" class="table bg-primary border border-secondary table-primary table-striped">
+    <thead>
+      <tr class="table-primary">
+        <th scope="col">#</th>
+        <th scope="col">User</th>
+        <th scope="col">Title</th>
+        <th scope="col">Barcode</th>
+        <th scope="col">Start Date</th>
+        <th scope="col">End Date</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="table-primary" *ngFor="let reservation of reservations; let i = index">
+        <th scope="row">{{i + 1}}</th>
+        <td>{{ reservation.bookTitle }}</td>
+        <td>{{ reservation.userUsername }}</td>
+        <td>{{ reservation.copyBarcode }}</td>
+        <td>{{ reservation.reservationDate | date: 'dd/MM/YYYY' }}</td>
+        <td>{{ reservation.reservationEnd | date: 'dd/MM/YYYY' }}</td>
+        <td>
+          <ng-container *ngIf="isBeforeToday(reservation.reservationDate); else ongoingOrLate">
+            <i class="fa fa-clock-o"></i> Not started
+          </ng-container>
+          <ng-template #ongoingOrLate>
+            <ng-container *ngIf="isBetweenDates(reservation.reservationDate, reservation.reservationEnd); else late">
+              <ng-container *ngIf="!reservation.pickupDate">
+                <i class="fa fa-exclamation-triangle"></i> Not picked up
+              </ng-container>
+              <ng-container *ngIf="reservation.pickupDate">
+                <i class="fa fa-book"></i> In progress
+              </ng-container>
+            </ng-container>
+            <ng-template #late>
+              <ng-container *ngIf="reservation.pickupDate && !reservation.returnDate">
+                <i class="fa fa-exclamation-circle"></i> Overdue
+              </ng-container>
+              <ng-container *ngIf="reservation.returnDate">
+                <i class="fa fa-check"></i> Completed
+              </ng-container>
+            </ng-template>
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="mt-2 d-flex justify-content-center" *ngIf="pagination && reservations.length > 0">
+  <pagination [boundaryLinks]="true"
+              [totalItems]="pagination.totalItems"
+              [itemsPerPage]="pagination.pageSize"
+              [maxSize]="25"
+              [(ngModel)]="pagination.pageNumber"
+              (pageChanged)="pageChanged($event)"
+              previousText="&lsaquo;"
+              nextText="&rsaquo;"
+              firstText="&laquo;"
+              lastText="&raquo;">
+  </pagination>
+  </div>
+  <ng-template #noReservationsFound>
+    <div class="text-center text-white mt-3">
+      <h4>No reservations found.</h4>
+    </div>
+  </ng-template>
+</section>

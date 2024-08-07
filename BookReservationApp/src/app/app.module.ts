@@ -20,6 +20,7 @@ import { LoadingInterceptor } from "./_interceptors/loading.interceptor";
 import { RequestJwtInterceptor } from "./_interceptors/request-jwt.interceptor";
 import { ReservationFormComponent } from "./reservations/reservation-form/reservation-form.component";
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ReservationsListComponent } from "./reservations/reservations-list/reservations-list.component";
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     InputTextComponent,
     BooksListComponent,
     BooksCardComponent,
-    ReservationFormComponent
+    ReservationFormComponent,
+    ReservationsListComponent
   ],
   imports: [
     TooltipModule.forRoot(),

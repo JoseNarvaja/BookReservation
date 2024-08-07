@@ -6,6 +6,7 @@ import { AuthGuard } from './_guards/auth.guard';
 import { BookDetailComponent } from './books/book-detail/book-detail.component';
 import { BookDetailResolver } from './_resolvers/book-detail.resolver';
 import { ReservationFormComponent } from './reservations/reservation-form/reservation-form.component';
+import { ReservationsListComponent } from './reservations/reservations-list/reservations-list.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -13,6 +14,7 @@ export const routes: Routes = [
     path: '', runGuardsAndResolvers: 'always', canActivate: [AuthGuard],
     children: [
       { path: 'books', component: BooksListComponent },
+      { path: 'reservations', component: ReservationsListComponent },
       { path: 'books/:isbn', component: BookDetailComponent, resolve: { book: BookDetailResolver } },
       { path: 'books/:isbn/reserve', component: ReservationFormComponent, resolve: { book: BookDetailResolver } }
     ]
