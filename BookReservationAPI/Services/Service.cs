@@ -30,7 +30,7 @@ namespace BookReservationAPI.Services
         public async Task<(IEnumerable<TEntity>, int)> GetAllWithTotalCountAsync(PaginationParams pagination, Expression<Func<TEntity, bool>>? filter = null, string? includeProperties = null)
         {
             IEnumerable<TEntity> entities = await _repository.GetAllAsync(pagination, filter, includeProperties: includeProperties);
-            int totalCount = await _repository.GetTotalCountAsync();
+            int totalCount = await _repository.GetTotalCountAsync(filter);
             return (entities, totalCount);
         }
 

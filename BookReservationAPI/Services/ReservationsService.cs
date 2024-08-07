@@ -37,13 +37,13 @@ namespace BookReservationAPI.Services
             switch (role)
             {
                 case StaticData.RoleAdmin:
-                    reservations = await _reservationRepository.GetAllAsync(pagination);
+                    reservations = await _reservationRepository.GetAllAsync(pagination,includeProperties: "Copy,User,Book");
                     count = await _reservationRepository.GetTotalCountAsync();
                     break;
                 case StaticData.RoleCustomer:
                     string username = GetClaimFromJwt(jwt, "unique_name");
                     var user = await _localUserRepository.GetAsync(u => u.UserName == username);
-                    reservations = await _reservationRepository.GetAllAsync(pagination, reservation => reservation.UserId == user.Id);
+                    reservations = await _reservationRepository.GetAllAsync(pagination, reservation => reservation.UserId == user.Id, "Copy,User,Book");
                     count = await _reservationRepository.GetTotalCountAsync(reservation => reservation.UserId == user.Id);
                     break;
                 default:

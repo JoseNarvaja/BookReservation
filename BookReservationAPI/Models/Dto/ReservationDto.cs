@@ -15,10 +15,10 @@ namespace BookReservationAPI.Models.Dto
         public DateTime? ReturnDate { get; set; }
 
         [Required]
-        public int BookId { get; set; }
+        public string BookTitle { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public string UserUsername { get; set; }
         [Required]
-        public int CopyId { get; set; }
+        public string CopyBarcode { get; set; }
     }
 }
