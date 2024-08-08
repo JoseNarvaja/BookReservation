@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ReservationsService } from '../../_services/reservations.service';
 import { ReservationDto } from '../../_models/reservation';
-import { ApiResponse } from '../../_models/api-response';
 import { ToastrService } from 'ngx-toastr';
 import { PaginatedResponse, Pagination } from '../../_models/paginated-response';
 import { PaginationParams } from '../../_models/pagination-params';
@@ -34,7 +33,7 @@ export class ReservationsListComponent implements OnInit {
         this.pagination = response.pagination;
     },
     error: () => {
-      this.toAstr.error("Error while loading the reservations", "Error");
+      this.toAstr.error("An error ocurred while loading the reservations. Try later", "Error");
     }
   });
   }

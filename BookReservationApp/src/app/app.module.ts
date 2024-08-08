@@ -21,9 +21,11 @@ import { RequestJwtInterceptor } from "./_interceptors/request-jwt.interceptor";
 import { ReservationFormComponent } from "./reservations/reservation-form/reservation-form.component";
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReservationsListComponent } from "./reservations/reservations-list/reservations-list.component";
+import { RoleRequiredDirective } from "./_directives/role-required.directive";
 
 @NgModule({
   declarations: [
+    RoleRequiredDirective,
     NavbarComponent,
     HomeComponent,
     AppComponent,
@@ -33,7 +35,7 @@ import { ReservationsListComponent } from "./reservations/reservations-list/rese
     BooksListComponent,
     BooksCardComponent,
     ReservationFormComponent,
-    ReservationsListComponent
+    ReservationsListComponent,
   ],
   imports: [
     TooltipModule.forRoot(),

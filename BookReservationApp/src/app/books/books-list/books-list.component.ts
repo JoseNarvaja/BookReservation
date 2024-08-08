@@ -41,6 +41,9 @@ export class BooksListComponent implements OnInit, OnDestroy {
             this.books = response.result.result;
             this.pagination = response.pagination
           }
+        },
+        error: () => {
+          this.toAstr.error("An error ocurred while loading the books. Try later", "Error");
         }
       })
     }
