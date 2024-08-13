@@ -22,6 +22,7 @@ import { ReservationFormComponent } from "./reservations/reservation-form/reserv
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReservationsListComponent } from "./reservations/reservations-list/reservations-list.component";
 import { RoleRequiredDirective } from "./_directives/role-required.directive";
+import { ReservationDetailComponent } from "./reservations/reservation-detail/reservation-detail.component";
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { RoleRequiredDirective } from "./_directives/role-required.directive";
     BooksCardComponent,
     ReservationFormComponent,
     ReservationsListComponent,
+    ReservationDetailComponent
   ],
   imports: [
     TooltipModule.forRoot(),

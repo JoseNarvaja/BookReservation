@@ -1,0 +1,98 @@
+<div class="container">
+  <div class="card bg-primary text-white p-2">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h2>Reservation Details</h2>
+      <button class="btn btn-lg btn-secondary" [routerLink]="['/reservations']">
+        <i class="fa fa-arrow-left"></i> Back to List
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <h5><i class="fa fa-book"></i> Book Title:</h5>
+              <p>{{ reservation?.bookTitle }}</p>
+            </div>
+            <div class="col-lg-6">
+              <h5><i class="fa fa-user"></i> Username:</h5>
+              <p>{{ reservation?.userUsername }}</p>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <h5><i class="fa fa-barcode"></i> Copy Barcode:</h5>
+              <p>{{ reservation?.copyBarcode }}</p>
+            </div>
+            <div class="col-lg-6">
+              <h5><i class="fa fa-calendar"></i> Reservation Date:</h5>
+              <p>{{ reservation?.reservationDate | date: 'dd/MM/yyyy' }}</p>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <h5><i class="fa fa-calendar-times-o"></i> Reservation End Date:</h5>
+              <p>{{ reservation?.reservationEnd | date: 'dd/MM/yyyy' }}</p>
+            </div>
+            <div class="col-lg-6">
+              <h5><i class="fa fa-calendar-check-o"></i> Pickup Date:</h5>
+              <p>{{ reservation?.pickupDate ? (reservation.pickupDate | date: 'dd/MM/yyyy') : 'Not yet picked up' }}</p>
+            </div>
+          </div>
+          <div class="row mb-3 align-items-center">
+            <div class="col-lg-6">
+              <h5><i class="fa fa-calendar-minus-o"></i> Return Date:</h5>
+              <p>{{ reservation?.returnDate ? (reservation.returnDate | date: 'dd/MM/yyyy') : 'Not yet returned' }}</p>
+            </div>
+            <div class="col-lg-6 d-flex align-items-center">
+              <div class="status-container">
+                <ng-container *ngIf="isBeforeToday(reservation?.reservationDate); else ongoingOrLate">
+                  <span class="badge bg-secondary">
+                    <h5><i class="fa fa-clock-o"></i> Not started</h5>
+                  </span>
+                </ng-container>
+                <ng-template #ongoingOrLate>
+                  <ng-container *ngIf="isBetweenDates(reservation?.reservationDate, reservation?.reservationEnd); else late">
+                    <ng-container *ngIf="!reservation?.pickupDate">
+                      <span class="badge bg-warning text-dark">
+                        <h5><i class="fa fa-exclamation-triangle"></i> Not picked up</h5>
+                      </span>
+                    </ng-container>
+                    <ng-container *ngIf="reservation?.pickupDate">
+                      <span class="badge bg-info">
+                        <h5><i class="fa fa-book"></i> In progress</h5>
+                      </span>
+                    </ng-container>
+                  </ng-container>
+                  <ng-template #late>
+                    <ng-container *ngIf="reservation?.pickupDate && !reservation?.returnDate">
+                      <span class="badge bg-danger">
+                        <h5><i class="fa fa-exclamation-circle"></i> Overdue</h5>
+                      </span>
+                    </ng-container>
+                    <ng-container *ngIf="reservation?.returnDate">
+                      <span class="badge bg-success">
+                        <h5><i class="fa fa-check"></i> Completed</h5>
+                      </span>
+                    </ng-container>
+                  </ng-template>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4" *appRoleRequired="['Admin']">
+          <h5 class="text-center mb-3">Actions</h5>
+          <div class="btn-group d-flex justify-content-center flex-column">
+            <button class="btn btn-warning mx-3 mb-2" (click)="markAsPickedUp()" [disabled]="reservation?.pickupDate">
+              {{ reservation?.pickupDate ? 'Already Picked Up' : 'Mark as Picked Up' }}
+            </button>
+            <button class="btn btn-danger mx-3 mb-2" (click)="markAsReturned()" [disabled]="reservation?.returnDate || !reservation?.pickupDate">
+              {{ reservation?.returnDate ? 'Already Returned' : 'Mark as Returned' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

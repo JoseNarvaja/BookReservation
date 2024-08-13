@@ -46,6 +46,24 @@ export class ReservationsService {
       }));
   }
 
+  getReservation(id: string): Observable<ReservationDto> {
+    return this.http.get<ApiResponse<ReservationDto>>(this.baseUrl + '/reservations/' + id).pipe(
+      map((response: ApiResponse<ReservationDto>) => {
+        return response.result;
+      }
+      ));
+  }
+
+  markAsPickedUp(id: string) {
+    console.log("Enviando request a: " + this.baseUrl + `/reservations/${id}/pickup`);
+    return this.http.put(this.baseUrl + `/reservations/${id}/pickup`, null);
+  }
+
+  markAsReturned(id: string) {
+    console.log("Enviando request a: " + this.baseUrl +`/reservations/${id}/return`);
+    return this.http.put(this.baseUrl + `/reservations/${id}/return`, null);
+  }
+
   getPaginationParams() {
     return this.paginationParams;
   }
