@@ -55,9 +55,9 @@ namespace BookReservationAPI.Services
 
         public async Task<Reservation> GetByIdAsync(int id)
         {
-            Reservation reservation = await _reservationRepository.GetAsync(r => r.Id == id);
-            
-            if(reservation == null)
+            Reservation reservation = await _reservationRepository.GetAsync(r => r.Id == id, includeProperties: "Copy,User,Book");
+
+            if (reservation == null)
             {
                 throw new KeyNotFoundException("No reservation was found");
             }
@@ -123,15 +123,12 @@ namespace BookReservationAPI.Services
                 throw new KeyNotFoundException("The reservation wasn't found");
             }
 
-            if (reservationFromDb.PickupDate != null)
+            if (reservationFromDb.ReturnDate != null)
             {
                 throw new ArgumentException("The reservation was already returned");
             }
 
-            await _reservationRepository.NotifyReturn(reservationFromDb);
-
-            Book book = await _bookRepository.GetAsync(b => b.Id == reservationFromDb.BookId);
-            await _bookRepository.SaveAsync();
+            await _reservationRepository.NotifyReturn(reservationFromDb);;
             await _reservationRepository.SaveAsync();
             await _copiesRepository.MarkAsAvailable(reservationFromDb.CopyId);
 
