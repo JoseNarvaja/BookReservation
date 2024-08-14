@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg bg-primary px-3" data-bs-theme="dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="#"><i class="fa-solid fa-book-bookmark"></i> Book Reservation Web</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,14 @@
             <li><a class="dropdown-item text-white">Manage Reservations</a></li>
           </ul>
         </li>
+      </ul>
+    </div>
+    <div class="dropdown text-white" *ngIf="authService.currentUser$ | async">
+      <button class="btn btn-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa fa-2x fa-user-circle-o"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end mt-1">
+        <li><a class="dropdown-item" (click)="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
       </ul>
     </div>
   </div>

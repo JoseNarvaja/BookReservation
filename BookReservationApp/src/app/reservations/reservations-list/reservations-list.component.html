@@ -1,5 +1,6 @@
 <section class="container-fluid rounded bg-primary p-3">
   <h3 class="text-center text-white">Reservation list</h3>
+  <hr class="text-white" />
   <table *ngIf="reservations && reservations.length > 0; else noReservationsFound" class="table bg-primary border border-secondary table-primary table-striped">
     <thead>
       <tr class="table-primary">
@@ -16,8 +17,8 @@
     <tbody>
       <tr class="table-primary" *ngFor="let reservation of reservations; let i = index">
         <th scope="row">{{i + 1}}</th>
+        <td>{{ reservation.userUsername}}</td>
         <td>{{ reservation.bookTitle }}</td>
-        <td>{{ reservation.userUsername }}</td>
         <td>{{ reservation.copyBarcode }}</td>
         <td>{{ reservation.reservationDate | date: 'dd/MM/YYYY' }}</td>
         <td>{{ reservation.reservationEnd | date: 'dd/MM/YYYY' }}</td>

@@ -3,13 +3,26 @@
   transition-duration: 500ms;
   transition-timing-function: ease-out;
   opacity: 0.95;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .book-card {
   transform: scale(1.0, 1.0);
   transition-duration: 500ms;
   transition-timing-function: ease-out;
+}
+
+.book-card .card-body dd {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+}
+
+.book-card h4 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .card-img-book {
