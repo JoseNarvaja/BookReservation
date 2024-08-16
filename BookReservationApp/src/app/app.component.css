@@ -1,6 +1,6 @@
 .image-background {
   background-image: url('/assets/Home.png');
   background-size: cover;
-  min-height: 100vh;
+  min-height: 120vh;
   background-position: center;
 }

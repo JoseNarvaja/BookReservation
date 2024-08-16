@@ -23,6 +23,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReservationsListComponent } from "./reservations/reservations-list/reservations-list.component";
 import { RoleRequiredDirective } from "./_directives/role-required.directive";
 import { ReservationDetailComponent } from "./reservations/reservation-detail/reservation-detail.component";
+import { AdminBooksListComponent } from "./admin/admin-books-list/admin-books-list.component";
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ReservationDetailComponent } from "./reservations/reservation-detail/re
     BooksCardComponent,
     ReservationFormComponent,
     ReservationsListComponent,
-    ReservationDetailComponent
+    ReservationDetailComponent,
+    AdminBooksListComponent
   ],
   imports: [
     TooltipModule.forRoot(),

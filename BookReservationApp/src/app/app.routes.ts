@@ -9,6 +9,8 @@ import { ReservationFormComponent } from './reservations/reservation-form/reserv
 import { ReservationsListComponent } from './reservations/reservations-list/reservations-list.component';
 import { reservationDetailResolver } from './_resolvers/reservation-detail.resolver';
 import { ReservationDetailComponent } from './reservations/reservation-detail/reservation-detail.component';
+import { adminGuard } from './_guards/admin.guard';
+import { AdminBooksListComponent } from './admin/admin-books-list/admin-books-list.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,6 +22,12 @@ export const routes: Routes = [
       { path: 'reservations', component: ReservationsListComponent },
       { path: 'books/:isbn', component: BookDetailComponent, resolve: { book: BookDetailResolver } },
       { path: 'books/:isbn/reserve', component: ReservationFormComponent, resolve: { book: BookDetailResolver } }
+    ]
+  },
+  {
+    path: 'admin', runGuardsAndResolvers: 'always', canActivate: [adminGuard],
+    children: [
+      { path: 'books', component: AdminBooksListComponent }
     ]
   },
   { path: '**', redirectTo: '' }
