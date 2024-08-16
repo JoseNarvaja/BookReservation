@@ -15,4 +15,8 @@ export class NavbarComponent {
     this.authService.logout();
     this.router.navigateByUrl("/");
   }
+
+  navigateToReservations() {
+    this.router.navigateByUrl("/reservations");
+  }
 }

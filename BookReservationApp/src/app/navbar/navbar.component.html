@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg bg-primary px-3" data-bs-theme="dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="#"><i class="fa-solid fa-book-bookmark"></i> Book Reservation Web</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarColor01">
@@ -20,17 +20,18 @@
             Admin Options
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item text-white">Manage Books</a></li>
+            <li><a class="dropdown-item text-white" href="/admin/books">Manage Books</a></li>
             <li><a class="dropdown-item text-white">Manage Reservations</a></li>
           </ul>
         </li>
       </ul>
     </div>
-    <div class="dropdown text-white" *ngIf="authService.currentUser$ | async">
-      <button class="btn btn-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="dropdown text-white ms-3" *ngIf="authService.currentUser$ | async">
+      <button class="btn btn-primary ms-auto" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="fa fa-2x fa-user-circle-o"></i>
       </button>
       <ul class="dropdown-menu dropdown-menu-end mt-1">
+        <li><a class="dropdown-item" (click)="navigateToReservations()"><i class="fa fa-book" aria-hidden="true"></i> My Reservations</a></li>
         <li><a class="dropdown-item" (click)="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
       </ul>
     </div>
