@@ -5,16 +5,15 @@
          class="form-control mt-2"
          [formControl]="control"
          placeholder="{{label}}" />
-  <div class="invalid-feedback" *ngIf="control.errors?.['required']">
-    A {{label}} is required
-  </div>
-  <div class="invalid-feedback" *ngIf="control.errors?.['minlength']">
-    {{label}} must be at least {{control.errors?.['minlength'].requiredLength}} characters
-  </div>
-  <div class="invalid-feedback" *ngIf="control.errors?.['maxlength']">
-    {{label}} must be at most {{control.errors?.['maxlength'].requiredLength}} characters
-  </div>
-  <div class="invalid-feedback" *ngIf="control.errors?.['notMatching']">
-    Passwords do not match
-  </div>
+  <ul class="invalid-feedback" *ngIf="control.errors?.['required'] || control.errors?.['minlength'] || control.errors?.['maxlength'] || control.errors?.['notMatching'] || control.errors?.['invalidIsbn']">
+    <li *ngIf="control.errors?.['required']">A {{label}} is required</li>
+    <li *ngIf="control.errors?.['minlength']">
+      {{label}} must be at least {{control.errors?.['minlength'].requiredLength}} characters
+    </li>
+    <li *ngIf="control.errors?.['maxlength']">
+      {{label}} must be at most {{control.errors?.['maxlength'].requiredLength}} characters
+    </li>
+    <li *ngIf="control.errors?.['notMatching']">Passwords do not match</li>
+    <li *ngIf="control.errors?.['invalidIsbn']">ISBN must be a 13 numeric characters</li>
+  </ul>
 </div>

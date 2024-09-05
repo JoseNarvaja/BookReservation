@@ -24,6 +24,7 @@ import { ReservationsListComponent } from "./reservations/reservations-list/rese
 import { RoleRequiredDirective } from "./_directives/role-required.directive";
 import { ReservationDetailComponent } from "./reservations/reservation-detail/reservation-detail.component";
 import { AdminBooksListComponent } from "./admin/admin-books-list/admin-books-list.component";
+import { AdminBookUpsertComponent } from "./admin/admin-book-upsert/admin-book-upsert.component";
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { AdminBooksListComponent } from "./admin/admin-books-list/admin-books-li
     ReservationFormComponent,
     ReservationsListComponent,
     ReservationDetailComponent,
-    AdminBooksListComponent
+    AdminBooksListComponent,
+    AdminBookUpsertComponent
   ],
   imports: [
     TooltipModule.forRoot(),

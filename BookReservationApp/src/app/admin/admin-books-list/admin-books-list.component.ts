@@ -65,8 +65,14 @@ export class AdminBooksListComponent implements OnInit {
     this.titleSubscription.unsubscribe();
   }
 
-  navigateToUpsert() {
-    this.router.navigateByUrl("admin/books/create");
+  navigateToUpsert(isbn: string) {
+    if (isbn.length > 1) {
+      this.router.navigateByUrl("admin/books/upsert/" + isbn);
+    }
+    else {
+      this.router.navigateByUrl("admin/books/upsert");
+    }
+    
   }
 
 }

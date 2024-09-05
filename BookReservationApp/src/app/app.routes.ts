@@ -11,6 +11,7 @@ import { reservationDetailResolver } from './_resolvers/reservation-detail.resol
 import { ReservationDetailComponent } from './reservations/reservation-detail/reservation-detail.component';
 import { adminGuard } from './_guards/admin.guard';
 import { AdminBooksListComponent } from './admin/admin-books-list/admin-books-list.component';
+import { AdminBookUpsertComponent } from './admin/admin-book-upsert/admin-book-upsert.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -27,7 +28,9 @@ export const routes: Routes = [
   {
     path: 'admin', runGuardsAndResolvers: 'always', canActivate: [adminGuard],
     children: [
-      { path: 'books', component: AdminBooksListComponent }
+      { path: 'books', component: AdminBooksListComponent },
+      { path: 'books/upsert/:isbn', component: AdminBookUpsertComponent },
+      { path: 'books/upsert', component: AdminBookUpsertComponent }
     ]
   },
   { path: '**', redirectTo: '' }

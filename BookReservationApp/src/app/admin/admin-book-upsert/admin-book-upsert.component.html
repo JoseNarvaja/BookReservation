@@ -1,0 +1,54 @@
+<form [formGroup]="bookForm"
+      (ngSubmit)="bookForm.valid && submitForm()"
+      class="card bg-primary text-light mx-auto p-3 mt-3"
+      style="max-width:1200px">
+  <div class="card-body">
+    <h3 class="text-center">Create a new book</h3>
+    <hr />
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <app-input-text [formControl]="$any(bookForm.controls['title'])" [type]="'text'" [label]="'Title'"></app-input-text>
+      </div>
+      <div class="col-12 col-md-6">
+        <app-input-text
+                  [formControl]="$any(bookForm.controls['isbn'])"
+                  [type]="'text'" [label]="'ISBN'"></app-input-text>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Category</label>
+      <select class="form-select" formControlName="idCategory"
+              [class.is-invalid]="bookForm.controls['idCategory'].touched && bookForm.controls['idCategory'].invalid">
+        <option selected disabled [ngValue]="''">Select a Category</option>
+        <option *ngFor="let category of categories" [value]="category.id">{{category.name}}</option>
+      </select>
+      <div class="invalid-feedback" *ngIf="bookForm.controls['idCategory'].errors?.['required']">
+        A Category is required.
+      </div>
+    </div>
+    <div class="mb-3">
+      <app-input-text [formControl]="$any(bookForm.controls['author'])" [type]="'text'" [label]="'Author'"></app-input-text>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" rows="5" formControlName="description"
+                [class.is-invalid]="bookForm.controls['description'].touched && bookForm.controls['description'].invalid"
+                ></textarea>
+      <div class="invalid-feedback" *ngIf="bookForm.controls['description'].errors?.['required']">
+        A Description is required.
+      </div>
+    </div>
+    <div class="row" *ngIf="validationErrors">
+      <ul class="text-danger">
+        <li *ngFor="let error of validationErrors">
+          {{error}}
+        </li>
+      </ul>
+    </div>
+    <div class="d-grid gap-2 col-6 mx-auto">
+      <button [disabled]="!bookForm.valid" type="submit" class="mt-2 btn btn-secondary"> {{isbn ? 'Update' : 'Create'}}</button>
+    </div>
+  </div>
+</form>
+
+

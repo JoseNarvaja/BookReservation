@@ -1,11 +1,11 @@
 <section class="container-fluid rounded bg-primary p-3">
   <h3 class="text-center text-white">Books list</h3>
-  <button class="btn btn-secondary" (click)="navigateToUpsert()">
+  <button class="btn btn-secondary" (click)="navigateToUpsert('')">
     <i class="fa fa-plus"></i> Add Book
   </button>
   <hr class="text-white" />
   <form class="text-center">
-    <div class="input-group input-group-lg mb-3">
+    <div class="input-group input-group-md mb-3">
       <span class="input-group-text" id="titleInput"><i class="fa fa-search"></i></span>
       <input type="text"
              name="title"
@@ -37,7 +37,7 @@
         <td>{{ book.isbn }}</td>
         <td>{{ book.category?.name}}</td>
         <td class="book-description">{{ book.description}}</td>
-        <td><a class="btn btn-secondary"><i class="fa fa-pencil-square-o"></i></a></td>
+        <td><a class="btn btn-secondary" (click)="navigateToUpsert(book.isbn)"><i class="fa fa-pencil-square-o"></i></a></td>
       </tr>
     </tbody>
   </table>

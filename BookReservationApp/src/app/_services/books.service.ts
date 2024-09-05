@@ -6,6 +6,7 @@ import { Observable, map } from 'rxjs';
 import { ApiResponse } from '../_models/api-response';
 import { PaginatedResponse } from '../_models/paginated-response';
 import { BooksParams } from '../_models/books-params';
+import { BookUpsertDto } from '../_models/book-upsert-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -59,5 +60,13 @@ export class BooksService {
 
   setBooksParams(booksParams: BooksParams) {
     this.booksParams = booksParams;
+  }
+
+  createBook(bookDto: BookUpsertDto) {
+    return this.http.post<ApiResponse<Book>>(this.baseUrl + '/books', bookDto);
+  }
+
+  updateBook(bookDto: BookUpsertDto, isbn: string) {
+    return this.http.put(this.baseUrl + '/books/' + isbn, bookDto);
   }
 }
