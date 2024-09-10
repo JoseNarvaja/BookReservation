@@ -147,7 +147,7 @@ namespace BookReservationAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> UpdateImage([FromRoute] string ISBN,IFormFile photo)
+        public async Task<ActionResult<APIResponse>> UpdateImage([FromRoute] string ISBN,IFormFile file)
         {
             try
             {
@@ -158,7 +158,7 @@ namespace BookReservationAPI.Controllers
                     await _photoUploaderService.DeletePhoto(book.ImageId);
                 }
                 
-                var (photoUrl, photoPublicId) = await _photoUploaderService.AddPhotoAsync(photo);
+                var (photoUrl, photoPublicId) = await _photoUploaderService.AddPhotoAsync(file);
                 book.ImageUrl = photoUrl;
                 book.ImageId = photoPublicId;
 

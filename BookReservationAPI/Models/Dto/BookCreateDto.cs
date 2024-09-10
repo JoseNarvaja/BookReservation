@@ -11,7 +11,7 @@ namespace BookReservationAPI.Models
         [Required]
         public string Description { get; set; }
         [Required]
-        [StringLength(14)]
+        [StringLength(13)]
         public string ISBN { get; set; }
         [Required]
         public string Author { get; set; }

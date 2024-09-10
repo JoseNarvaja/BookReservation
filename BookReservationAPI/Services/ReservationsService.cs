@@ -108,6 +108,16 @@ namespace BookReservationAPI.Services
                 throw new ArgumentException("The reservation was already pickup");
             }
 
+            if(reservationFromDb.ReservationEnd < DateTime.UtcNow)
+            {
+                throw new ArgumentException("The reservation has expired and cannot be picked up");
+            }
+
+            if(reservationFromDb.ReservationDate > DateTime.UtcNow)
+            {
+                throw new ArgumentException("The reservation hasn't started yet");
+            }
+
             await _reservationRepository.NotifyPickup(reservationFromDb);
             await _reservationRepository.SaveAsync();
 
@@ -121,6 +131,11 @@ namespace BookReservationAPI.Services
             if (reservationFromDb == null)
             {
                 throw new KeyNotFoundException("The reservation wasn't found");
+            }
+
+            if(reservationFromDb.PickupDate == null)
+            {
+                throw new ArgumentException("The reservation wasn't picked up");
             }
 
             if (reservationFromDb.ReturnDate != null)
