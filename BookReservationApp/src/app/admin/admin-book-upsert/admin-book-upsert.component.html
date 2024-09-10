@@ -38,6 +38,7 @@
         A Description is required.
       </div>
     </div>
+    <input hidden type="text" formControlName="imageUrl" />
     <div class="row" *ngIf="validationErrors">
       <ul class="text-danger">
         <li *ngFor="let error of validationErrors">

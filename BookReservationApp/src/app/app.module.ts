@@ -25,6 +25,8 @@ import { RoleRequiredDirective } from "./_directives/role-required.directive";
 import { ReservationDetailComponent } from "./reservations/reservation-detail/reservation-detail.component";
 import { AdminBooksListComponent } from "./admin/admin-books-list/admin-books-list.component";
 import { AdminBookUpsertComponent } from "./admin/admin-book-upsert/admin-book-upsert.component";
+import { FileUploadModule } from 'ng2-file-upload';
+import { PhotoEditorComponent } from "./admin/photo-editor/photo-editor.component";
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { AdminBookUpsertComponent } from "./admin/admin-book-upsert/admin-book-u
     ReservationsListComponent,
     ReservationDetailComponent,
     AdminBooksListComponent,
-    AdminBookUpsertComponent
+    AdminBookUpsertComponent,
+    PhotoEditorComponent
   ],
   imports: [
     TooltipModule.forRoot(),
@@ -56,7 +59,8 @@ import { AdminBookUpsertComponent } from "./admin/admin-book-upsert/admin-book-u
     NgxSpinnerModule.forRoot({
       type: 'ball-spin-clockwise'
     }),
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    FileUploadModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },

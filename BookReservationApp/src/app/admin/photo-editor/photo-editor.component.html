@@ -1,0 +1,66 @@
+<section class="card bg-primary p-3">
+  <h2 class="text-white text-center">Upload a cover for your book</h2>
+  <hr />
+  <div class="card-body row">
+    <div class="col-4">
+      <img src="{{book?.imageUrl || './assets/bookCover.jpg'}}" alt="book cover photo" class="img-thumbnail mb-1" />
+    </div>
+    <div class="col-8">
+      <div ng2FileDrop
+           [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+           (fileOver)="fileOverBase($event)"
+           [uploader]="uploader"
+           class="card bg-faded p-3 text-center mb-3 my-drop-zone">
+        <i class="fa fa-upload fa-3x"></i>
+        Drop your photo here
+      </div>
+      <input class="text-white" type="file" ng2FileSelect [uploader]="uploader"/>
+    </div>
+    
+    
+  </div>
+  <div class="card-footer text-white">
+    <div style="margin-bottom: 40px" *ngIf="uploader?.queue?.length">
+
+      <h3>Upload queue</h3>
+      <p>Queue length: {{ uploader?.queue?.length }}</p>
+
+      <table class="table mb-2">
+        <thead>
+          <tr>
+            <th width="50%">Name</th>
+            <th>Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of uploader?.queue">
+            <td><strong>{{ item?.file?.name }}</strong></td>
+            <td *ngIf="uploader?.options?.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div>
+        <div>
+          Queue progress:
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader?.progress + '%' }"></div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-success btn-s"
+                (click)="uploader?.uploadAll()" [disabled]="!uploader?.getNotUploadedItems()?.length">
+          <span class="fa fa-upload"></span> Upload
+        </button>
+        <button type="button" class="btn btn-warning btn-s"
+                (click)="uploader?.cancelAll()" [disabled]="!uploader?.isUploading">
+          <span class="fa fa-ban"></span> Cancel
+        </button>
+        <button type="button" class="btn btn-danger btn-s"
+                (click)="uploader?.clearQueue()" [disabled]="!uploader?.queue?.length">
+          <span class="fa fa-trash"></span> Remove
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>

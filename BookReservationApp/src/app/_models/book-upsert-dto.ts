@@ -3,5 +3,6 @@ export interface BookUpsertDto {
   description: string,
   isbn: string,
   author: string,
-  idCategory: number
+  idCategory: number,
+  imageUrl: string
 }

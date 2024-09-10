@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Book } from '../../_models/book';
 import { PaginatedResponse } from '../../_models/paginated-response';
 import { ApiResponse } from '../../_models/api-response';
+import { FileUploader } from 'ng2-file-upload';
 
 @Component({
   selector: 'app-admin-book-upsert',
@@ -16,9 +17,10 @@ import { ApiResponse } from '../../_models/api-response';
 })
 export class AdminBookUpsertComponent implements OnInit {
   bookForm: FormGroup = new FormGroup({});
+  uploader: FileUploader | undefined;
   isbn: string | null = null;
   validationErrors: string[] | undefined;
-  categories: Category[] | undefined
+  categories: Category[] | undefined;
 
   constructor(
     private categoriesService: CategoriesService,
@@ -60,7 +62,8 @@ export class AdminBookUpsertComponent implements OnInit {
       description: ['', Validators.required],
       isbn: ['', [Validators.required, this.isbnValidator()]],
       author: ['', Validators.required],
-      idCategory: ['', Validators.required]
+      idCategory: ['', Validators.required],
+      imageUrl: ['']
     });
   }
 
@@ -78,7 +81,7 @@ export class AdminBookUpsertComponent implements OnInit {
         this.bookForm.patchValue(book);
       },
       error: () => {
-        this.toastr.error("An erorr occurred while loading the book","Error");
+        this.toastr.error("An error occurred while loading the book","Error");
       }
     })
   }
@@ -97,7 +100,7 @@ export class AdminBookUpsertComponent implements OnInit {
     this.bookService.updateBook(bookDto, this.isbn!).subscribe({
       next: () => {
         this.toastr.success("Book updated successfully");
-        this.router.navigateByUrl('/admin/books');
+        this.router.navigateByUrl('admin/books/upsert/' + this.bookForm.controls['isbn'].value + '/image');
       },
       error: error => {
         this.validationErrors = error;
@@ -112,7 +115,7 @@ export class AdminBookUpsertComponent implements OnInit {
       next: response => {
         if (response.success) {
           this.toastr.success("Book created succesfully");
-          this.router.navigateByUrl('/admin/books');
+          this.router.navigateByUrl('admin/books/upsert/' + this.bookForm.controls['isbn'].value + '/image');
         }
       },
       error: (error: ApiResponse<any>) => {
