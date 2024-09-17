@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Book } from '../../_models/book';
 import { PaginatedResponse, Pagination } from '../../_models/paginated-response';
 import { BooksParams } from '../../_models/books-params';
@@ -6,6 +6,7 @@ import { Subject, Subscription, debounceTime } from 'rxjs';
 import { BooksService } from '../../_services/books.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-admin-books-list',
@@ -18,8 +19,12 @@ export class AdminBooksListComponent implements OnInit {
   pagination: Pagination | undefined;
   private titleSubject: Subject<string> = new Subject<string>();
   private titleSubscription: Subscription;
+  modalRef: BsModalRef | undefined;
 
-  constructor(private bookService: BooksService, private toAstr: ToastrService, private router: Router) {
+  constructor(private bookService: BooksService,
+    private toAstr: ToastrService,
+    private router: Router,
+    private modalService: BsModalService) {
     this.booksParams = this.bookService.getBooksParams();
     this.titleSubscription = this.titleSubject.pipe(debounceTime(600)).subscribe(title => {
       if (this.booksParams) {
@@ -72,7 +77,35 @@ export class AdminBooksListComponent implements OnInit {
     else {
       this.router.navigateByUrl("admin/books/upsert");
     }
-    
+  }
+
+  navigateToCopiesList(isbn: string) {
+    //todo
+  }
+
+  deleteBook(isbn: string) {
+    this.bookService.deleteBook(isbn).subscribe({
+      next: response => {
+        this.books = this.books.filter(b => b.isbn != isbn);
+        this.toAstr.success("The book was deleted successfuly", "Book Deleted");
+      },
+      error: response => {
+        this.toAstr.error("An error ocurred while deleting the book. Please try later", "Error");
+      }
+      });
+  }
+
+  openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+  }
+
+  confirm(isbn: string): void {
+    this.deleteBook(isbn);
+    this.modalRef?.hide();
+  }
+
+  decline(): void {
+    this.modalRef?.hide()
   }
 
 }

@@ -69,4 +69,8 @@ export class BooksService {
   updateBook(bookDto: BookUpsertDto, isbn: string) {
     return this.http.put(this.baseUrl + '/books/' + isbn, bookDto);
   }
+
+  deleteBook(isbn: string) {
+    return this.http.delete(this.baseUrl + '/books/' + isbn);
+  }
 }

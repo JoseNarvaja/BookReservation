@@ -6,3 +6,8 @@
   -webkit-box-orient: vertical;
   white-space: normal;
 }
+
+table tbody tr td {
+  min-height: 90px; /* Ajusta el valor según lo necesites */
+  vertical-align: top; /* Asegura que el contenido se alinee arriba */
+}

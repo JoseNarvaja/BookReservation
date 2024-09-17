@@ -27,6 +27,8 @@ import { AdminBooksListComponent } from "./admin/admin-books-list/admin-books-li
 import { AdminBookUpsertComponent } from "./admin/admin-book-upsert/admin-book-upsert.component";
 import { FileUploadModule } from 'ng2-file-upload';
 import { PhotoEditorComponent } from "./admin/photo-editor/photo-editor.component";
+import { ModalModule } from 'ngx-bootstrap/modal';
+
 
 @NgModule({
   declarations: [
@@ -60,7 +62,8 @@ import { PhotoEditorComponent } from "./admin/photo-editor/photo-editor.componen
       type: 'ball-spin-clockwise'
     }),
     BsDatepickerModule.forRoot(),
-    FileUploadModule
+    FileUploadModule,
+    ModalModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
