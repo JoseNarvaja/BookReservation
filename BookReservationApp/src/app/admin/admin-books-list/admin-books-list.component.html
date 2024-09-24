@@ -43,9 +43,9 @@
                     tooltip="Update Book" placement="top">
               <i class="fa fa-pencil-square-o"></i>
             </button>
-            <button class="btn btn-info"
-                    tooltip="Add Copy" placement="top">
-              <i class="fa fa-plus-circle"></i>
+            <button class="btn btn-info" (click)="navigateToCopiesList(book.isbn)"
+                    tooltip="Manage Copies" placement="top">
+              <i class="fa fa-th-list"></i>
             </button>
             <button class="btn btn-danger" (click)="openModal(template)"
                     tooltip="Delete Book" placement="top">

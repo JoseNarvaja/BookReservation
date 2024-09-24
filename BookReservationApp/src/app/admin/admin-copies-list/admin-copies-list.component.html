@@ -1,0 +1,102 @@
+<section class="container rounded bg-primary p-3">
+  <h3 class="text-center text-white">Copies list</h3>
+
+  <div class="d-flex justify-content-between mb-3">
+    <a class="btn btn-secondary" href="/admin/books">
+      <i class="fa fa-arrow-left"></i> Return to Books List
+    </a>
+    <button class="btn btn-info"
+            [popover]="popAddTemplate"
+            popoverTitle="Add Copy"
+            [outsideClick]="true">
+      <i class="fa fa-plus"></i> Add Copy
+    </button>
+  </div>
+
+  <ng-template #popAddTemplate>
+    <form class="text-center" (ngSubmit)="createCopy(barcodeInput.value)">
+      <label class="form-label">Barcode</label>
+      <input required type="text" class="form-control mt-2" #barcodeInput placeholder="Barcode" />
+      <button type="submit" class="mt-2 btn btn-success">Create Copy</button>
+    </form>
+  </ng-template>
+  
+  <hr class="text-white" />
+  <table *ngIf="copies && copies.length > 0; else noCopiesFound" class="table bg-primary border border-secondary table-primary table-striped">
+    <thead>
+      <tr class="table-primary">
+        <th scope="col">#</th>
+        <th scope="col">Barcode</th>
+        <th scope="col">Status</th>
+        <th scope="col" style="width: 150px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="table-primary" *ngFor="let copy of copies; let i = index">
+        <th scope="row">{{i + 1}}</th>
+        <td>{{ copy.barcode}}</td>
+        <td>{{ copy.isDeleted ? "Deleted" : "Active"}}</td>
+        <td>
+          <div class="d-inline-flex gap-2">
+            <button class="btn btn-info"
+                    tooltip="Update Copy" placement="top"
+                    [popover]="popUpdateTemplate"
+                    popoverTitle="Update Copy"
+                    [outsideClick]="true">
+              <i class="fa fa-pencil-square-o"></i>
+            </button>
+            <ng-template #popUpdateTemplate>
+              <form class="text-center" (ngSubmit)="UpdateCopy(copy.barcode,barcodeUpdateInput.value)">
+                <label class="form-label">Barcode</label>
+                <input required type="text" class="form-control mt-2" #barcodeUpdateInput placeholder="Barcode" />
+                <button type="submit" class="mt-2 btn btn-success">Update Copy</button>
+              </form>
+            </ng-template>
+            <button class="btn"
+                    [ngClass]="copy.isDeleted ? 'btn-success' : 'btn-danger'"
+                    tooltip="Delete Copy"
+                    placement="top"
+                    (click)="openModal(copy.isDeleted ? confirmReactivateTemplate : confirmDeleteTemplate)">
+              <i class="fa" [ngClass]="copy.isDeleted ? 'fa-undo' : 'fa-trash'"></i>
+            </button>
+            <ng-template #confirmDeleteTemplate>
+              <div class="modal-body text-center">
+                <p>Do you want to delete this copy?</p>
+                <button type="button" class="btn btn-danger m-1" (click)="confirm(copy.barcode)">Yes</button>
+                <button type="button" class="btn btn-primary m-1" (click)="decline()">No</button>
+              </div>
+            </ng-template>
+            <ng-template #confirmReactivateTemplate>
+              <div class="modal-body text-center">
+                <p>Do you want to reactivate this copy?</p>
+                <button type="button" class="btn btn-danger m-1" (click)="confirmReactivate(copy.barcode)">Yes</button>
+                <button type="button" class="btn btn-primary m-1" (click)="decline()">No</button>
+              </div>
+            </ng-template>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="mt-2 d-flex justify-content-center" *ngIf="pagination && copies.length > 0">
+    <pagination [boundaryLinks]="true"
+                [totalItems]="pagination.totalItems"
+                [itemsPerPage]="pagination.pageSize"
+                [maxSize]="25"
+                [(ngModel)]="pagination.pageNumber"
+                (pageChanged)="pageChanged($event)"
+                previousText="&lsaquo;"
+                nextText="&rsaquo;"
+                firstText="&laquo;"
+                lastText="&raquo;">
+    </pagination>
+  </div>
+  <ng-template #noCopiesFound>
+    <div class="text-white mt-3">
+      <h4>No copies found.</h4>
+    </div>
+  </ng-template>
+</section>
+<aside class="p-3">
+
+</aside>

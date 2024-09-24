@@ -80,7 +80,7 @@ export class AdminBooksListComponent implements OnInit {
   }
 
   navigateToCopiesList(isbn: string) {
-    //todo
+    this.router.navigateByUrl("admin/books/" + isbn + "/copies");
   }
 
   deleteBook(isbn: string) {

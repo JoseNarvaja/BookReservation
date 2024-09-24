@@ -13,6 +13,7 @@ import { adminGuard } from './_guards/admin.guard';
 import { AdminBooksListComponent } from './admin/admin-books-list/admin-books-list.component';
 import { AdminBookUpsertComponent } from './admin/admin-book-upsert/admin-book-upsert.component';
 import { PhotoEditorComponent } from './admin/photo-editor/photo-editor.component';
+import { AdminCopiesListComponent } from './admin/admin-copies-list/admin-copies-list.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -32,7 +33,8 @@ export const routes: Routes = [
       { path: 'books', component: AdminBooksListComponent },
       { path: 'books/upsert/:isbn', component: AdminBookUpsertComponent },
       { path: 'books/upsert', component: AdminBookUpsertComponent },
-      { path: 'books/upsert/:isbn/image', component: PhotoEditorComponent }
+      { path: 'books/upsert/:isbn/image', component: PhotoEditorComponent },
+      { path: 'books/:isbn/copies', component: AdminCopiesListComponent }
     ]
   },
   { path: '**', redirectTo: '' }

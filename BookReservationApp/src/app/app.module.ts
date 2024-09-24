@@ -28,7 +28,8 @@ import { AdminBookUpsertComponent } from "./admin/admin-book-upsert/admin-book-u
 import { FileUploadModule } from 'ng2-file-upload';
 import { PhotoEditorComponent } from "./admin/photo-editor/photo-editor.component";
 import { ModalModule } from 'ngx-bootstrap/modal';
-
+import { AdminCopiesListComponent } from "./admin/admin-copies-list/admin-copies-list.component";
+import { PopoverModule } from 'ngx-bootstrap/popover';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ReservationDetailComponent,
     AdminBooksListComponent,
     AdminBookUpsertComponent,
-    PhotoEditorComponent
+    PhotoEditorComponent,
+    AdminCopiesListComponent
   ],
   imports: [
     TooltipModule.forRoot(),
@@ -63,7 +65,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     }),
     BsDatepickerModule.forRoot(),
     FileUploadModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    PopoverModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
